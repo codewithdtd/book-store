@@ -1,12 +1,13 @@
 const { ObjectId } = require("mongodb");
-class ProductService {
+class BookService {
     constructor(client) {
-        this.Product = client.db().collection("sach");
+        this.Book = client.db().collection("sach");
     }
 // Định nghĩa các phương thức truy xuất CSDL sử dụng mongodb API
-    infoProduct(payload) {
-        const product = {
+    infoBook(payload) {
+        const book = {
             ten: payload.ten,
+            hinhanh: payload.hinhanh,
             dongia: payload.dongia,
             tacgia: payload.tacgia,
             soluong: payload.soluong,
@@ -18,18 +19,18 @@ class ProductService {
             deleted: 0,
         };
         // Remove undefined fields
-        Object.keys(product).forEach(
+        Object.keys(book).forEach(
             (key) => {
-                product[key] === undefined && delete product[key]
+                book[key] === undefined && delete book[key]
             }
         );
-        return product;
+        return book;
     }
     async create(payload) {
-        const product = this.infoProduct(payload);
-        if(product.quantity >= 0) {
-            const result = await this.Product.findOneAndUpdate(
-                product,
+        const book = this.infoBook(payload);
+        if(book.soluong >= 0) {
+            const result = await this.Book.findOneAndUpdate(
+                book,
                 { $set: {ngaytao: new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear()}},
                 { returnDocument: "after", upsert: true }
             );
@@ -40,7 +41,7 @@ class ProductService {
 
     async find(filter) {
         // const filter = {};
-        const cursor = await this.Product.find(filter);
+        const cursor = await this.Book.find(filter);
         return await cursor.toArray();
     }
 
@@ -55,7 +56,7 @@ class ProductService {
     }
 
     async findById(id) {
-        const result = await this.Product.findOne({
+        const result = await this.Book.findOne({
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         });
         return result;
@@ -66,10 +67,10 @@ class ProductService {
         const filter = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
-        const update = this.infoProduct(payload);
+        const update = this.infoBook(payload);
         update.ngaychinhsua = new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear();
         if(update.quantity >= 0)  { 
-            const result = await this.Product.findOneAndUpdate(
+            const result = await this.Book.findOneAndUpdate(
                 filter,
                 { $set: update },
                 { returnDocument: "after" }
@@ -80,8 +81,8 @@ class ProductService {
         return false;
     }    
     
-    async updateProductCategory(name, payload) {
-        const result = await this.Product.findOneAndUpdate(
+    async updateBookCategory(name, payload) {
+        const result = await this.Book.findOneAndUpdate(
             {category: name},
             { $set: {category: payload.name}},
             { returnDocument: "after" }
@@ -90,7 +91,7 @@ class ProductService {
     }
 
     async delete(id) {
-        const result = await this.Product.findOneAndUpdate({
+        const result = await this.Book.findOneAndUpdate({
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         },
         {$set: {"deleted": 1}},
@@ -99,11 +100,11 @@ class ProductService {
     }
 
     async deleteAll() {
-        const result = await this.Product.deleteMany({});
+        const result = await this.Book.deleteMany({});
         return result.deletedCount;
     }
 }
 
 
 
-module.exports = ProductService;
+module.exports = BookService;

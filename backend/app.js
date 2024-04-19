@@ -1,8 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser")
+
 const userRouter = require("./app/routes/user.route");
-const menuRouter = require("./app/routes/menu.route");
+const bookRouter = require("./app/routes/book.route");
+// const staffRouter = require("./app/routes/staff.route");
+// const pulisherRouter = require("./app/routes/pulisher.route");
+
 const ApiError = require("./app/api-error");
 
 const app = express();
@@ -17,9 +21,12 @@ app.get("/", (req, res) => {
 
 // Xử lý user
 app.use("/api/user", userRouter);
-
-//Xử lý menu 
+//  Nhân viên
+// app.use("/api/staff", staffRouter);
+//Xử lý sách
 app.use("/api/book", bookRouter);
+//Xử lý nhà xuất bản
+// app.use("/api/pulisher", pulisherRouter);
 
 app.use("/static", express.static('app/uploads/'));
 // handle 404 response
