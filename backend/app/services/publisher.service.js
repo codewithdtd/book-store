@@ -62,7 +62,6 @@ class PublisherService {
     }
 
     async delete(id) {
-
         const result = await this.Publisher.findOneAndDelete({
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         });

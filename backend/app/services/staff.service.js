@@ -1,17 +1,16 @@
 const { ObjectId } = require("mongodb");
 class StaffService {
     constructor(client) {
-        this.User = client.db().collection("staff");
+        this.User = client.db().collection("nhanvien");
     }
 // Định nghĩa các phương thức truy xuất CSDL sử dụng mongodb API
     infoUser(payload) {
         const user = {
-            hoten: payload.ho,
+            hoten: payload.hoten,
             chucvu: payload.chucvu,
             diachi: payload.diachi,
             sodienthoai: payload.sodienthoai,
             password: payload.password,
-            phieutheodoi: [],
             ngaytao: payload.ngaytao,
             ngaychinhsua: payload.ngaychinhsua,
             deleted: 0,
@@ -19,7 +18,7 @@ class StaffService {
         // Remove undefined fields
         Object.keys(user).forEach(
             (key) => {
-                user['role'] = 'user';
+                user['role'] = 'admin',
                 user[key] === undefined && delete user[key]
             }
         );
@@ -147,4 +146,4 @@ class StaffService {
 
 
 
-module.exports = UserService;
+module.exports = StaffService;

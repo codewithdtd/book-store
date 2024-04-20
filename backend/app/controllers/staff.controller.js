@@ -1,4 +1,4 @@
-const UserService = require("../services/user.service");
+const StaffService = require("../services/staff.service");
 const CartService = require("../services/cart.service")
 const MongoDB = require("../utils/mongodb.util");
 const ApiError = require("../api-error");
@@ -8,13 +8,14 @@ const jwt = require('jsonwebtoken');
 const generateAccessToken = require("../middleware/generateAccessToken")
 const generateRefreshToken = require("../middleware/generateRefreshToken");
 const OrderService = require("../services/order.service");
-const BookService = require("../services/book.service")
+const BookService = require("../services/book.service");
+const PublisherService = require("../services/publisher.service");
 require('dotenv').config()
 
 exports.create = async (req, res, next) => {
     try {
-        const userService = new UserService(MongoDB.client);
-        const document = await userService.create(req.body);
+        const staffService = new StaffService(MongoDB.client);
+        const document = await staffService.create(req.body);
         return res.send(document);
     } catch (error) { 
         return next(
@@ -27,12 +28,12 @@ exports.findAll = async (req, res, next) => {
     let documents = [];
 
     try {
-        const userService = new UserService(MongoDB.client);
+        const staffService = new StaffService(MongoDB.client);
         const queryParams = req.query;
         if (Object.keys(queryParams).length > 0) {
-            documents = await userService.findByQuery(queryParams);
+            documents = await staffService.findByQuery(queryParams);
         } else {
-            documents = await userService.find({});
+            documents = await staffService.find({});
         }
     } catch (error) {
         return next(
@@ -44,8 +45,8 @@ exports.findAll = async (req, res, next) => {
 
 exports.findOne = async (req, res, next) => {
     try {
-        const userService = new UserService(MongoDB.client);
-        const document = await userService.findById(req.params.id);
+        const staffService = new StaffService(MongoDB.client);
+        const document = await staffService.findById(req.params.id);
         if (!document) {
             return next(new ApiError(404, "user not found"));
         }
@@ -66,8 +67,8 @@ exports.update = async (req, res, next) => {
     }
 
     try {
-        const userService = new UserService(MongoDB.client);
-        const document = await userService.update(req.params.id, req.body);
+        const staffService = new StaffService(MongoDB.client);
+        const document = await staffService.update(req.params.id, req.body);
         if (!document) {
             return next(new ApiError(404, "user not found"));
         }
@@ -82,8 +83,8 @@ exports.update = async (req, res, next) => {
 
 exports.delete = async (req, res, next) => {
     try {
-        const userService = new UserService(MongoDB.client);
-        const document = await userService.delete(req.params.id);
+        const staffService = new StaffService(MongoDB.client);
+        const document = await staffService.delete(req.params.id);
         if (!document) {
             return next(new ApiError(404, "user not found"));
         }
@@ -101,8 +102,8 @@ exports.delete = async (req, res, next) => {
 
 exports.deleteAll = async (_req, res, next) => {
     try {
-        const userService = new UserService(MongoDB.client);
-        const deletedCount = await userService.deleteAll();
+        const staffService = new StaffService(MongoDB.client);
+        const deletedCount = await staffService.deleteAll();
         return res.send({
             message: `${deletedCount} users were delete successfully`,
         })
@@ -118,8 +119,8 @@ exports.deleteAll = async (_req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         const data = req.body;
-        const userService = new UserService(MongoDB.client);
-        const user = await userService.findUserLogin({ sodienthoai: data.sodienthoai });
+        const staffService = new StaffService(MongoDB.client);
+        const user = await staffService.findUserLogin({ sodienthoai: data.sodienthoai });
     
         if(!user) {
             return next(new ApiError(404, "user not found"));
@@ -194,7 +195,7 @@ exports.refreshToken = async (req, res, next) => {
 // CART
 exports.addCart = async (req,res,next) => {
     try {
-        const userService = new UserService(MongoDB.client);
+        const staffService = new StaffService(MongoDB.client);
         const cartService = new CartService(MongoDB.client);
         const bookService = new BookService(MongoDB.client);
 
@@ -217,7 +218,7 @@ exports.addCart = async (req,res,next) => {
             countProduct.soluong = countProduct.soluong - cartItem.soluong;
 
             cartItems.push(cartItem)
-            const addCart = await userService.addCart(id, cartItems);
+            const addCart = await staffService.addCart(id, cartItems);
 
             const updateBook = await bookService.update(cartItem.sach._id,countProduct)
 
@@ -237,8 +238,8 @@ exports.addCart = async (req,res,next) => {
             const carts = await cartService.findAllCartUser(id)
 
             const newCarts = carts.map(({ user, ...rest}) => rest);
-            const clearCart = await userService.deleteAllCart(id)
-            const updateCartUser = await userService.updateCart(id,newCarts) 
+            const clearCart = await staffService.deleteAllCart(id)
+            const updateCartUser = await staffService.updateCart(id,newCarts) 
 
             return res.send(addtoCart);
         }
@@ -270,7 +271,7 @@ exports.updateCart = async (req, res, next) => {
         const user = req.user.user._id;
 
         const cartService = new CartService(MongoDB.client);
-        const userService = new UserService(MongoDB.client);
+        const staffService = new StaffService(MongoDB.client);
         const bookService = new BookService(MongoDB.client)
    
         //Check số lượng sản phẩm trong kho
@@ -294,8 +295,8 @@ exports.updateCart = async (req, res, next) => {
 
 
             const newCarts = carts.map(({ user, ...rest}) => rest);
-            const clearCart = await userService.deleteAllCart(user)
-            const updateCartUser = await userService.updateCart(user,newCarts) 
+            const clearCart = await staffService.deleteAllCart(user)
+            const updateCartUser = await staffService.updateCart(user,newCarts) 
 
             return res.json(updateCartUser)
         }
@@ -316,7 +317,7 @@ exports.deleteCart = async (req, res, next) => {
 
 
         const cartService = new CartService(MongoDB.client);
-        const userService = new UserService(MongoDB.client);
+        const staffService = new StaffService(MongoDB.client);
         const bookService = new BookService(MongoDB.client)
 
         const cart = await cartService.findById(cart_id)
@@ -329,7 +330,7 @@ exports.deleteCart = async (req, res, next) => {
 
 
         const deleteCart = await cartService.delete(cart._id);
-        const deleteCartUser = await userService.deleteCart(user, cart._id)
+        const deleteCartUser = await staffService.deleteCart(user, cart._id)
 
         return res.json(deleteCartUser);
     } catch (error) {
@@ -349,12 +350,10 @@ exports.addOrder = async (req, res, next) => {
 
         const cartService = new CartService(MongoDB.client);
         const orderService = new OrderService(MongoDB.client);
-        const userService = new UserService(MongoDB.client);
 
         // Create order
         const addOrder = await orderService.create(order);
         await cartService.deleteAllCartUser(user);
-        await userService.deleteAllCart(user);
         return res.json(addOrder);
     } catch (error) {
         console.log(error)
@@ -391,5 +390,85 @@ exports.findAllOrderUser = async (req, res, next) => {
         return next( new ApiError(
             500, "Đã có lỗi xảy ra!"
         ))
+    }
+}
+
+exports.findAllOrder = async (req, res, next) => {
+    try {
+        const orderService = new OrderService(MongoDB.client);
+
+        const AllOrder = await orderService.findAll()
+        return res.json(AllOrder)
+    } catch (error) {
+        console.log(error)
+        return next( new ApiError(
+            500, "Đã có lỗi xảy ra!"
+        ))
+    }
+}
+
+exports.findAllPublisher = async (req, res, next) => {
+    try {
+        const publisherService = new PublisherService(MongoDB.client);
+
+        const AllPublisher = await publisherService.find()
+        return res.json(AllPublisher)
+    } catch (error) {
+        console.log(error)
+        return next( new ApiError(
+            500, "Đã có lỗi xảy ra!"
+        ))
+    }
+}
+
+exports.addPublisher = async (req, res, next) => {
+    try {
+        const publisherService = new PublisherService(MongoDB.client);
+        const newPublisher = await publisherService.create(req.body);
+        
+        return res.send(newPublisher);
+
+    } catch (error) {
+        console.log(error)
+        return next( new ApiError(
+            500, "Đã có lỗi xảy ra!"
+        ))
+    }
+}
+
+exports.updatePublisher = async (req, res, next) => {
+    if (Object.keys(req.body).length === 0) {
+        return next(new ApiError(400, "Data to update can not be empty"));
+    }
+
+    try {
+        const staffService = new StaffService(MongoDB.client);
+        const document = await staffService.update(req.params.id, req.body);
+        if (!document) {
+            return next(new ApiError(404, "Not found"));
+        }
+        return res.send(document);
+    } catch (error) {
+        return next(
+            new ApiError(500, `Error with id=${req.params.id}`)
+        );
+    }
+}
+
+exports.deletePublisher = async (req, res, next) => {
+    try {
+        const staffService = new StaffService(MongoDB.client);
+        const document = await staffService.delete(req.params.id);
+        if (!document) {
+            return next(new ApiError(404, "Not found"));
+        }
+        return res.send(document);
+    } catch (error) {
+        return next(
+            new ApiError(
+                500, 
+                `Không thể xóa id=${req.params.id}`
+            )
+        );
     }
 }

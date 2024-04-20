@@ -4,7 +4,7 @@ const cookieParser = require("cookie-parser")
 
 const userRouter = require("./app/routes/user.route");
 const bookRouter = require("./app/routes/book.route");
-// const staffRouter = require("./app/routes/staff.route");
+const staffRouter = require("./app/routes/staff.route");
 // const pulisherRouter = require("./app/routes/pulisher.route");
 
 const ApiError = require("./app/api-error");
@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
 // Xử lý user
 app.use("/api/user", userRouter);
 //  Nhân viên
-// app.use("/api/staff", staffRouter);
+app.use("/api/staff", staffRouter);
 //Xử lý sách
 app.use("/api/book", bookRouter);
 //Xử lý nhà xuất bản
