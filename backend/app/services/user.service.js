@@ -13,7 +13,7 @@ class UserService {
             ngaysinh: payload.ngaysinh,
             sodienthoai: payload.sodienthoai,
             password: payload.password,
-            phieutheodoi: [],
+            cart: payload.cart,
             ngaytao: payload.ngaytao,
             ngaychinhsua: payload.ngaychinhsua,
             deleted: 0,
