@@ -9,7 +9,7 @@ class CartService {
             docgia: payload.docgia,
             sach: payload.sach,
             soluong: payload.soluong,
-            price: payload.soluong*payload.product.price        
+            price: payload.soluong*payload.sach.dongia        
         };
         // Remove undefined fields
         Object.keys(cart).forEach(
@@ -25,8 +25,8 @@ class CartService {
             const result = await this.Cart.findOneAndUpdate(
                 cart,
                 { $set: {
-                    docgia: docgia,
-                    gia: payload.soluong*payload.product.gia
+                    docgia: user,
+                    gia: payload.soluong*payload.sach.dongia
                     }
                 },
                 { returnDocument: "after", upsert: true }
@@ -64,7 +64,7 @@ class CartService {
         return result;
     }
     async find(user, id) {
-        const result = await this.Cart.findOne({ 'sach._id': { $eq: id }, docgia: docgia });
+        const result = await this.Cart.findOne({ 'sach._id': { $eq: id }, docgia: user });
         return result;
     }
 
@@ -78,7 +78,7 @@ class CartService {
 
     async findAllCartUser(id) {
         const filter = {
-            user: id,
+            docgia: id,
         };
         const result = await this.Cart.find(filter);
         return result.toArray();
@@ -98,7 +98,7 @@ class CartService {
 
     async deleteAllCartUser(id) {
         const filter = {
-            user: id,
+            docgia: id,
         };
         const result = await this.Cart.deleteMany(filter);
         return result;
