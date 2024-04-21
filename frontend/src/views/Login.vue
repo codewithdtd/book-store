@@ -41,7 +41,7 @@ export default {
 
         const handleSubmit = async() => {
             const data = {
-                phone: phone.value,
+                sodienthoai: phone.value,
                 password: password.value,
             }
             try {

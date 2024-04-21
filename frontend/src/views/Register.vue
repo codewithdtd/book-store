@@ -7,31 +7,44 @@
             <h1>Đăng Ký</h1>
             <div class="register__info ">
                 <div class="register__info__item">
-                    <label for="" class="">Họ Tên:</label>
-                    <input type="text" v-model="name">
+                    <label for="" class="">Họ:</label>
+                    <input required type="text" v-model="ho">
                 </div>
                 <div class="register__info__item">
-                    <label for="" class="">Số điện thoại:</label>
-                    <input type="text" v-model="phone">
+                    <label for="" class="">Tên:</label>
+                    <input required type="text" v-model="ten">
                 </div>
             </div>
             <div class="register__info ">
                 <div class="register__info__item">
-                    <label for="" class="">Mật khẩu:</label>
-                    <input type="password" v-model="password">
+                    <label for="" class="">Số điện thoại:</label>
+                    <input required maxlength="10" minlength="10" type="text" v-model="sodienthoai">
                 </div>
                 <div class="register__info__item">
-                    <label for="" class="">Xác nhận mật khẩu:</label>
-                    <input type="password" v-model="password_comfirm">
+                    <label for="" class="">Giới tính:</label>
+                    <select name="" id="" v-model="gioitinh">
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
                 </div>
             </div>
             <div class="register__info register__info__item">
-                <label for="">Email (Nếu có):</label>
-                <input type="text" v-model="email">
+                <label for="">Ngày sinh:</label>
+                <input required type="date" v-model="ngaysinh" max="2018-12-31">
+            </div>
+            <div class="register__info ">
+                <div class="register__info__item">
+                    <label for="" class="">Mật khẩu:</label>
+                    <input required type="password" v-model="password">
+                </div>
+                <div class="register__info__item">
+                    <label for="" class="">Xác nhận mật khẩu:</label>
+                    <input required type="password" v-model="password_comfirm">
+                </div>
             </div>
             <div class="register__info register__info__item">    
                 <label for="">Địa chỉ:</label>
-                <textarea name="" id="" cols="30" rows="3" v-model="address"></textarea>
+                <textarea name="" id="" cols="30" rows="3" v-model="diachi"></textarea>
             </div>
           
             <p class="m-1">
@@ -52,17 +65,17 @@ export default {
     methods: {
         async handleSubmit() {
             const data = {
-                name: this.name,
-                phone: this.phone,
-                password: this.password,
-                email: this.email,
-                address:this.address,
+                ho: this.ho,
+                ten: this.ten,
+                ngaysinh: this.ngaysinh,
+                diachi: this.diachi,
+                sodienthoai: this.sodienthoai,
+                gioitinh: this.gioitinh,
+                password: this.password
             }
-            console.log(data);
-
             try {
                 this.register = await userService.register(data);
-                    this.message = "thành công.";
+                this.message = "thành công.";
             } catch (error) {
                 console.log(error);
             }
@@ -71,12 +84,15 @@ export default {
     },
     data() {
         return {
-            name: '',
-            phone: '',
+            ho: '',
+            ten: '',
+            sodienthoai: '',
             password: '',
             password_comfirm: '',
             email: '',
-            address:'',
+            diachi:'',
+            ngaysinh:'',
+            gioitinh: '',
             register: null,
         }
     }
@@ -121,6 +137,7 @@ export default {
     align-items: start;
     margin: 0 10px;
     color: #fff;
+    flex: 1;
 }
 
 .register__info__item input, textarea {
@@ -130,6 +147,16 @@ export default {
     background-color: rgb(255, 255, 255);
     font-size: 1.2rem;
     padding-left: 10px;
+}
+
+.register__info__item select {
+    height: 100%;
+    border-radius: 15px;
+    border: none;
+    background-color: rgb(255, 255, 255);
+    font-size: 1.2rem;
+    padding-left: 10px;
+    min-width: 100%;
 }
 
 .register form a {

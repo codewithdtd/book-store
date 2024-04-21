@@ -19,9 +19,8 @@
         <div class="header__menu col-md-10 col-sm-5 row" :class="{ 'header__menu--active': showNav}">
             <div class="header__navbar col-md-6">
                 <router-link to="/" class="header__navbar__link">Trang chủ</router-link>
-                <router-link to="/menu" class="header__navbar__link">Menu</router-link>
+                <router-link to="/menu" class="header__navbar__link">Sách</router-link>
                 <router-link to="/about" class="header__navbar__link">Giới thiệu</router-link>
-                <router-link to="/contact" class="header__navbar__link">Liên hệ</router-link>
             </div>
                 
             <div class="header__function col-md-6 justify-content-end">
@@ -41,10 +40,10 @@
                     </router-link>
                 </div>
                 <div v-else class="header__function__item header__function__info header__function__info--auth">
-                    <p><i class="fa-regular fa-user"></i>{{ userStore.user.name }}</p>
+                    <p><i class="fa-regular fa-user"></i>{{ userStore.user.ho +' '+ userStore.user.ten }}</p>
                     <div class="header__function__info__nav">
-                        <p>Thông tin</p>
-                        <p>Đơn hàng</p>
+                        <!-- <p>Thông tin</p>
+                        <p>Đơn hàng</p> -->
                         <button class="btn btn-outline-warning" @click="userStore.logout()"><i class="fa-solid fa-right-from-bracket"></i></button>
                     </div>
                 </div>
@@ -57,28 +56,6 @@
 import userService from '@/services/user.service';
 import Search from './Search.vue';
 import { useUserStore } from '@/stores/userStore';
-
-
-// export default {
-//     components: { Search },
-//     setup() {
-//         // Sử dụng ref để khai báo biến showNav
-//         const userStore = useUserStore();
-//         const showNav = ref(false);
-
-//         // Định nghĩa hàm handleNav bằng Composition API
-//         const handleNav = () => {
-//             showNav.value = !showNav.value;
-//         };
-
-//         // Trả về biến showNav và hàm handleNav
-//         return {
-//             showNav,
-//             handleNav,
-//             userStore,
-//         };
-//     }
-// }
 
 export default {
     components: { Search },
@@ -224,10 +201,12 @@ export default {
     position: absolute;
     top: 100%;
     background-color: var(--color-background);
-    box-shadow: rgba(255, 255, 255, 0.24) 0px 3px 8px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     width: 80%;
     display: none;
     text-align: center;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 .header__function__info:hover .header__function__info__nav {
