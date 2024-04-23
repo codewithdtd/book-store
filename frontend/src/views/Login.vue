@@ -18,7 +18,7 @@
                 <router-link to="/register">Đăng ký</router-link>
             </p>
           
-            <button class="m-1 btn btn-danger">Đăng nhập</button>
+            <button class="m-1 btn btn-info">Đăng nhập</button>
         </form>
     </div>
 </template>
@@ -88,7 +88,7 @@ export default {
 }
 
 .login form {
-    /* background-color: rgba(0, 0, 0, 0.589); */
+    background-color: rgba(0, 0, 0, 0.532);
     backdrop-filter: blur(8px);
     border-radius: 40px;
     padding: 10px 20px;

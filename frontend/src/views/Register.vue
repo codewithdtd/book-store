@@ -53,7 +53,7 @@
             </p>
             
           
-            <button class="m-1 btn btn-outline-danger">Đăng ký</button>
+            <button class="m-1 btn btn-outline-info">Đăng ký</button>
         </form>
     </div>
 </template>
@@ -118,6 +118,7 @@ export default {
 }
 
 .register form {
+    background-color: rgba(0, 0, 0, 0.532);
     backdrop-filter: blur(8px);
     border-radius: 40px;
     padding: 10px 20px;

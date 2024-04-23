@@ -5,7 +5,7 @@
             <div class="home__one__element">
                 <h1>Chào mừng đến với Book Store</h1>
                 <p>Sở hữu không gian mua sắm rộng rãi, thoáng mát với đầy đủ các thể loại sách đa dạng phong phú, từ sách văn học, khoa học kỹ thuật, kinh tế, ngoại ngữ,... đến sách thiếu nhi, truyện tranh,... đáp ứng mọi nhu cầu đọc của quý khách hàng.</p>
-                <router-link to="/menu">
+                <router-link to="/product">
                     <button class="">Xem Sách</button>
                 </router-link>
             </div>
@@ -85,7 +85,7 @@ export default {
     border: none;
 }
 .home__one button:hover {
-    background-color: #a00f0f;
+    background-color: #0f5aa0;
 }
 
 
