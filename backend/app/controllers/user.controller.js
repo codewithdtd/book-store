@@ -199,11 +199,12 @@ exports.addCart = async (req,res,next) => {
         const bookService = new BookService(MongoDB.client);
 
         const data = req.body;
+        const { soluong, ...all } = data
         const id = req.user.user._id;
 
         const cartItems = [];
         const cartItem = {
-            sach: data,
+            sach: all,
             soluong: !data.soluong ? 1 : data.soluong,
             dongia: data.dongia,
         };
@@ -211,11 +212,10 @@ exports.addCart = async (req,res,next) => {
         const countProduct = await bookService.findById(data._id)
 
         const findCart = await cartService.find(id, data._id)
-        console.log(cartItem);
+        // console.log(cartItem);
         
         if(countProduct.soluong >= cartItem.soluong && !findCart ){
             countProduct.soluong = countProduct.soluong - cartItem.soluong;
-
             cartItems.push(cartItem)
             const addCart = await userService.addCart(id, cartItems);
 
@@ -230,7 +230,6 @@ exports.addCart = async (req,res,next) => {
             const total = cartItem.dongia*cartItem.soluong+findCart.dongia;
             findCart.dongia = total;
             // cartItems.push(cartItem)
-
             const updateBook = await bookService.update(cartItem.sach._id,countProduct)
             const addtoCart = await cartService.updatesoluong(findCart);
         

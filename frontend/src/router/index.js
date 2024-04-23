@@ -1,11 +1,10 @@
 import { createWebHistory, createRouter } from "vue-router";
 import Register from "@/views/Register.vue";
 import Home from "@/views/Home.vue";
-import Menu from "@/views/Menu.vue";
+import Product from "@/views/Product.vue";
 import Order from "@/views/Order.vue";
 import Cart from "@/views/Cart.vue";
 import Login from "@/views/Login.vue";
-// import Payment from "@/views/Payment.vue";
 import About from "@/views/About.vue";
 import Contact from "@/views/Contact.vue";
 import DetailProduct from "@/views/DetailProduct.vue";
@@ -51,9 +50,9 @@ const routes = [
         component: Login,
     },
     {
-        path: "/menu",
-        name: "Menu",
-        component: Menu,
+        path: "/product",
+        name: "Product",
+        component: Product,
     },
     {
         path: "/order",
@@ -76,7 +75,7 @@ const routes = [
         component: Contact,
     },
     {
-        path: "/menu/:id",
+        path: "/product/:id",
         name: "DetailProduct",
         component: DetailProduct,
     },

@@ -8,6 +8,7 @@ class OrderService {
         const order = {
             docgia: payload.docgia,
             sach: payload.sach,
+            tongtien: payload.tongtien,
             ngaymmuon: payload.ngaymmuon,
             ngaytra: payload.ngaytra,
         };
@@ -24,7 +25,8 @@ class OrderService {
         const result = await this.Order.findOneAndUpdate(
             order,
             { $set: { 
-                ngaymuon: new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear() + ' ' + new Date().getHours() +':' + new Date().getMinutes() + ':' + new Date().getSeconds(),
+                trangthai: 'Đã đăng ký'
+                // ngaymuon: new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear() + ' ' + new Date().getHours() +':' + new Date().getMinutes() + ':' + new Date().getSeconds(),
             }},
             { returnDocument: "after", upsert: true }
         );

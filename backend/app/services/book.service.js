@@ -69,7 +69,7 @@ class BookService {
         };
         const update = this.infoBook(payload);
         update.ngaychinhsua = new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear();
-        if(update.quantity >= 0)  { 
+        if(update.soluong >= 0)  { 
             const result = await this.Book.findOneAndUpdate(
                 filter,
                 { $set: update },

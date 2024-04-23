@@ -1,9 +1,9 @@
 <template>
     <div class="header__function__search col-sm-5">
-        <button @click="searchMenu">
+        <button @click="searchBook">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-        <input type="text" class="search__input" placeholder="tìm kiếm" v-model="search" @keyup="searchMenu">
+        <input type="text" class="search__input" placeholder="tìm kiếm" v-model="search" @keyup="searchBook">
         <div class="search__response" v-if="this.search !== ''">
             <p v-for="item in search_res" :key="item._id" @click="this.search_res=''">
                 <router-link :to="{name: 'DetailProduct', params: { id: item._id }}">{{ item.name }}</router-link>
@@ -14,15 +14,15 @@
 </template>
 
 <script>
-import menuService from '@/services/menu.service';
+import BookService from '@/services/book.service';
 
 export default {
     async mounted() {
-        this.menu = await menuService.getAll();
+        this.Book = await BookService.getAll();
     },
     methods: {
-        searchMenu() {
-            this.search_res = this.menu.filter((item) => item.name.toLowerCase().includes(this.search.toLowerCase()));
+        searchBook() {
+            this.search_res = this.Book.filter((item) => item.name.toLowerCase().includes(this.search.toLowerCase()));
             
             if(this.search == '') {
                 this.search_res = '';
@@ -31,7 +31,7 @@ export default {
     },
     data() {
         return {
-            menu: [],
+            Book: [],
             search_res: '', 
             search: '',
         }

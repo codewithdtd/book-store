@@ -19,7 +19,7 @@
         <div class="header__menu col-md-10 col-sm-5 row" :class="{ 'header__menu--active': showNav}">
             <div class="header__navbar col-md-6">
                 <router-link to="/" class="header__navbar__link">Trang chủ</router-link>
-                <router-link to="/menu" class="header__navbar__link">Sách</router-link>
+                <router-link to="/product" class="header__navbar__link">Sách</router-link>
                 <router-link to="/about" class="header__navbar__link">Giới thiệu</router-link>
             </div>
                 
@@ -33,10 +33,10 @@
                 
                 <div v-if="!userStore.login" class="header__function__item header__function__info">
                     <router-link to="/register">
-                        <button class="btn btn-outline-danger">Đăng ký</button>
+                        <button class="btn btn-outline-info">Đăng ký</button>
                     </router-link>
                     <router-link to="/login">
-                        <button class="btn btn-danger">Đăng nhập</button>
+                        <button class="btn btn-info">Đăng nhập</button>
                     </router-link>
                 </div>
                 <div v-else class="header__function__item header__function__info header__function__info--auth">

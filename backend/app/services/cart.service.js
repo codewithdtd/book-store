@@ -9,7 +9,7 @@ class CartService {
             docgia: payload.docgia,
             sach: payload.sach,
             soluong: payload.soluong,
-            price: payload.soluong*payload.sach.dongia        
+            gia: payload.soluong*payload.sach.dongia        
         };
         // Remove undefined fields
         Object.keys(cart).forEach(
@@ -37,6 +37,7 @@ class CartService {
     }
 
     async update(id, payload) {
+        console.log(payload)
         const filter = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
@@ -53,12 +54,13 @@ class CartService {
     }
 
     async updatesoluong(cart) {
+        console.log(cart)
         const filter = {
             _id: ObjectId.isValid(cart._id) ? new ObjectId(cart._id) : null,
         };
         const result = await this.Cart.findOneAndUpdate(
             filter,
-            { $set: {"soluong": cart.soluong, gia: cart.gia } },
+            { $set: {"soluong": cart.soluong, "gia": cart.gia } },
             { returnDocument: "after" }
         );
         return result;
