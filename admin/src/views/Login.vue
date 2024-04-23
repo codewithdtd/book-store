@@ -1,6 +1,6 @@
 <template>
     <div class="login">
-        <h1 class="login__title">Book Store</h1>
+        <h1 class="login__title">Book Store - Trang quản lý</h1>
         <div class="image">
             <!-- <img src="" alt=""> -->
         </div>
@@ -16,6 +16,7 @@
                         <i class="ri-lock-line"></i>
                         <input type="password" v-model="password" placeholder="Mật khẩu">
                     </div>
+                    <p>Chưa có tài khoản? <router-link to="/register" class="">Đăng ký</router-link></p>
                     <button class="m-1 btn btn-info">Đăng nhập</button>
             </form>
         </div>
@@ -71,7 +72,6 @@ export default {
     position: fixed;
     top: 20px;
     left: 20px;
-    font-family: "Satisfy", cursive;
     font-size: 2.5rem;
     font-weight: 500;
     text-decoration: none;
@@ -88,21 +88,11 @@ export default {
     background-size: cover;
 }
 
-/* .image img {
-    max-height: 50%;
-    max-width: 40%;
-    margin: auto;
-    /* background-color: #fff; */
-    /* border: 30px solid #757575; */
-    /* box-sizing: content-box; */
-    /* border-radius: 50%; */
-    /* z-index: 1; */
-/* } */ 
 
 .login .form h1{
     font-weight: 500;
     font-size: 2.5rem;  
-    color: var(--color-main);
+    color: #002f7a;
 }
 
 .login .form {
@@ -119,7 +109,7 @@ export default {
 }
 
 .login .form form {
-    background-color: #c3c3c36b;
+    background-color: #7dc2ffb4;
     border-radius: 10px;
     padding: 20px 20px;
     width: fit-content;
@@ -140,7 +130,7 @@ export default {
 .login__info__item i {
     font-size: 1.8rem;
     margin-right: 15px;
-    color: var(--color-main);
+    color: #002f7a;
 }
 
 .login__info__item input, textarea {
@@ -161,6 +151,6 @@ export default {
 }
 
 .login p {
-   color: #fff;
+   color: #333;
 }
 </style>

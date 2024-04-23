@@ -21,7 +21,7 @@ export default {
             <Header v-if="userStore.login"></Header>
             <router-view class="view"/>
         </div>
-        <!-- <Login /> -->
+        <!-- <Register /> -->
     </div>
 </template>
 
