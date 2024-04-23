@@ -1,17 +1,10 @@
 <template>
     <div class="about">
-        <h1>About JDa Chef</h1>
-        <p>Nhà hàng được mở từ năm 1990, là một trong những nhà hàng Trung Hoa lâu đời nhất tại thành phố. Trải qua bao thăng trầm, nơi đây vẫn giữ nguyên hương vị truyền thống của ẩm thực Trung Hoa, níu chân thực khách bởi những món ăn ngon và không gian ấm cúng.</p>
-
-        <p>
-            Thực đơn của nhà hàng vô cùng phong phú, với hơn 100 món ăn đa dạng, từ các món khai vị thanh đạm, món chính đậm đà cho đến các món tráng miệng ngọt ngào. Mỗi món ăn đều được chế biến tỉ mỉ, cầu kỳ, mang hương vị đặc trưng của từng vùng miền Trung Quốc.
-        </p>
-        <p>
-            Đặc biệt, nhà hàng còn sở hữu đội ngũ đầu bếp giàu kinh nghiệm, luôn tâm huyết mang đến cho thực khách những món ăn ngon nhất. Nguyên liệu được sử dụng đều tươi ngon, đảm bảo chất lượng, góp phần tạo nên hương vị hoàn hảo cho từng món ăn.
-        </p>
-        <p>
-            Nếu bạn đang tìm kiếm một nhà hàng Trung Hoa mang đậm dấu ấn thời gian, với hương vị truyền thống và không gian ấm cúng, thì nhà hàng này chính là điểm đến lý tưởng dành cho bạn.
-        </p>
+        <div class="about__inside">
+            <h1>Giới thiệu</h1>
+            <p style="text-align: justify;">Sách quốc văn với nhiều thể loại đa dạng như sách giáo khoa - tham khảo, giáo trình, sách học ngữ, từ điển, sách tham khảo thuộc nhiều chuyên ngành phong phú: văn học, tâm lý – giáo dục, khoa học kỹ thuật, khoa học kinh tế - xã hội, khoa học thường thức, sách phong thủy, nghệ thuật sống, danh ngôn, sách thiếu nhi, truyện tranh, truyện đọc, từ điển, công nghệ thông tin, khoa học – kỹ thuật, nấu ăn, làm đẹp...  của nhiều Nhà xuất bản, nhà cung cấp sách có uy tín như: NXB Trẻ, Giáo Dục, Kim Đồng, Văn hóa -Văn Nghệ, Tổng hợp TP.HCM, Chính Trị Quốc Gia; Công ty Đông A, Nhã Nam, Bách Việt, Alphabook, Thái Hà, Minh Lâm, Đinh Tị, Minh Long, TGM, Sáng Tạo Trí Việt, Khang Việt, Toàn Phúc…</p>
+            <p style="text-align: justify;">Gồm Phân xưởng in và Phân xưởng thành phẩm: với nhiều máy in hiện đại của Đức và Nhật: Heidelberg, Komori, Akiyama, Lithrone, Mitsubishi… cùng nhiều máy móc, thiết bị khác như: máy cắt, máy vô bìa sách, máy bế hộp…  Đội ngũ công nhân tay nghề cao, đã cho ra những sản phẩm có chất lượng tốt, nhờ đó, sản xuất theo đúng nhu cầu - thị hiếu của khách hàng và hình thành được quy trình in & phát hành.</p>
+        </div>
     </div>
 </template>
 
@@ -23,9 +16,18 @@ export default {
 
 <style>
 .about {
-    color: #fff;
-    /* background: url("../assets/bg.jpg");     */
-    background: #000000d7;    
+    color: #000000;
+    background: url("../assets/home.jpg");  
+    background-repeat: no-repeat;
+    background-size: cover;
+    text-align: center;
+    height: 100vh;
+    min-height: fit-content;
+}
+.about__inside {
+    color: #000000;
+    background-color: #00000093;
+    backdrop-filter: blur(2px);
     background-repeat: no-repeat;
     background-size: cover;
     text-align: center;
@@ -34,9 +36,9 @@ export default {
 }
 .about h1 {
     padding-top: 20px;
-    font-family: "Dancing Script", cursive;
     color: var(--color-main);
     font-size: 2.7rem;
+    text-shadow: 0.05rem 0.05rem hsl(0, 0%, 100%);
 }
 
 .about p {
@@ -47,6 +49,7 @@ export default {
     /* background-color: #00000059; */
     margin-top: 20px;
     line-height: 1.7;
+    /* text-shadow: 0.05rem 0.05rem hsl(0, 0%, 0%); */
 }
 .about button {
     font-size: 1.2rem;

@@ -72,20 +72,19 @@ export default {
             this.message = ''
         },
         async sort(data) {
-            console.log(this.beforeSort)
             if (data == 'asc') 
-                this.products = this.products.sort((a, b) => a.price - b.price)
+                this.products = this.products.sort((a, b) => a.dongia - b.dongia)
             else if (data == 'desc')
-                this.products = this.products.sort((a, b) => b.price - a.price)
+                this.products = this.products.sort((a, b) => b.dongia - a.dongia)
             else 
-                this.products = await productsService.getAll();
+                this.products = await ProductsService.getAll();
         },   
         async filter(data) {
             // this.products = data != '' ? await productsService.getByCategory(data): await productsService.getAll();    
         },
         async range(data) {
-            this.products = await productsService.getAll();
-            this.products = this.products.filter(item => item.price <= data)
+            this.products = await ProductsService.getAll();
+            this.products = this.book.filter(item => item.dongia <= data)
         }  
     }
 }   

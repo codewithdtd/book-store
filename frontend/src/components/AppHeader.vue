@@ -44,7 +44,7 @@
                     <div class="header__function__info__nav">
                         <!-- <p>Thông tin</p>
                         <p>Đơn hàng</p> -->
-                        <button class="btn btn-outline-warning" @click="userStore.logout()"><i class="fa-solid fa-right-from-bracket"></i></button>
+                        <button class="btn btn-outline-info" @click="userStore.logout()"><i class="fa-solid fa-right-from-bracket"></i></button>
                     </div>
                 </div>
             </div>
@@ -294,7 +294,7 @@ export default {
     }
 
     .header .header__button .header__function__bar:hover {
-        background-color: #ffc7c7;
+        background-color: #c7deff;
     } 
 
     .header__navbar a {
@@ -303,7 +303,7 @@ export default {
     }
 
     .header__navbar a:hover {
-        background-color: #fbe3e3;
+        background-color: #e3edfb;
     }
 
     .header .header__menu--active {

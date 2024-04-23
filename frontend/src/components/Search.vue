@@ -5,33 +5,43 @@
         </button>
         <input type="text" class="search__input" placeholder="tìm kiếm" v-model="search" @keyup="searchBook">
         <div class="search__response" v-if="this.search !== ''">
-            <p v-for="item in search_res" :key="item._id" @click="this.search_res=''">
-                <router-link :to="{name: 'DetailProduct', params: { id: item._id }}">{{ item.name }}</router-link>
+            <p v-for="item in filteredProducts" :key="item">
+                <router-link @click="this.search = ''" :to="{name: 'DetailProduct', params: { id: item._id }}">{{ item.ten }}</router-link>
             </p>
-            <!-- <p class="search__response__close">Đóng</p> -->
         </div>
     </div>
 </template>
 
 <script>
-import BookService from '@/services/book.service';
+import ProductService from '@/services/book.service';
 
 export default {
     async mounted() {
-        this.Book = await BookService.getAll();
+        this.book = await ProductService.getAll();
+    },
+    computed: {
+        productStrings() {
+            return this.book.map((product) => {
+                const { ten, tacgia, mota, nhaxuatban } = product;
+                return [ten, tacgia, mota, nhaxuatban].join(" ").toUpperCase();
+            });
+        },
+        filteredProducts() {
+            if (!this.search) return this.book;
+            return this.book.filter((_book, index) =>
+                    this.productStrings[index].includes(this.search.toUpperCase())
+            // Đoạn mã xử lý đầy đủ sẽ trình bày bên dưới
+            );
+        },
     },
     methods: {
         searchBook() {
-            this.search_res = this.Book.filter((item) => item.name.toLowerCase().includes(this.search.toLowerCase()));
             
-            if(this.search == '') {
-                this.search_res = '';
-            }
         }
     },
     data() {
         return {
-            Book: [],
+            book: [],
             search_res: '', 
             search: '',
         }
@@ -71,6 +81,7 @@ export default {
     position: absolute;
     z-index: 1;
     margin: 0;
+    border-radius: 10px;
 }
 
 .search__response p {
