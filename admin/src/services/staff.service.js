@@ -11,7 +11,7 @@ class StaffService {
         return (await this.api.post("/register", data)).data;
     }
     async login(data) {
-        const user = (await this.api.post("/login", data)).data; 
+        const user = (await this.api.post("/login", data)).data;
         return user;
     }
     async logout() {

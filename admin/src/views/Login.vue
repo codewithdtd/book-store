@@ -10,11 +10,11 @@
                 
                     <div class="login__info__item">
                         <i class="ri-user-line"></i>
-                        <input type="text" v-model="sodienthoai" placeholder="Số điện thoại">
+                        <input required :class="{'error': error}" type="text" v-model="sodienthoai" placeholder="Số điện thoại">
                     </div>
                     <div class="login__info__item">
                         <i class="ri-lock-line"></i>
-                        <input type="password" v-model="password" placeholder="Mật khẩu">
+                        <input required :class="{'error': error}" type="password" v-model="password" placeholder="Mật khẩu">
                     </div>
                     <p>Chưa có tài khoản? <router-link to="/register" class="">Đăng ký</router-link></p>
                     <button class="m-1 btn btn-info">Đăng nhập</button>
@@ -26,6 +26,7 @@
 <script>
 import { useUserStore } from '@/stores/userStore';
 import staffService from '@/services/staff.service';
+import router from '@/router';
 
 export default {
     methods: {
@@ -36,11 +37,14 @@ export default {
             }
             try {
                 const user = await staffService.login(data);
-                const { accessToken, ...orther } = user;
-                this.userStore.setUser(orther)
-                router.push('/')
+                if(user) {
+                    const { accessToken, ...orther } = user;
+                    this.userStore.setUser(orther)
+                    console.log(this.userStore.login);
+                    router.push('/')
+                }
             } catch (e) {
-                error.value = 'Sai';
+                this.error = true;
                 console.log(e);
             }
 
@@ -51,6 +55,7 @@ export default {
             userStore: useUserStore(),
             sodienthoai: '',
             password: '',
+            error: false,
         }
     },
 }
@@ -153,4 +158,5 @@ export default {
 .login p {
    color: #333;
 }
+
 </style>

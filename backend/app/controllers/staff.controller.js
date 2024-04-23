@@ -120,8 +120,8 @@ exports.login = async (req, res, next) => {
     try {
         const data = req.body;
         const staffService = new StaffService(MongoDB.client);
-        const user = await staffService.findUserLogin({ sodienthoai: data.sodienthoai });
-    
+        const user = await staffService.findUserLogin({ sodienthoai: data.sodienthoai, password: data.password });
+        console.log(user);
         if(!user) {
             return next(new ApiError(404, "user not found"));
         }

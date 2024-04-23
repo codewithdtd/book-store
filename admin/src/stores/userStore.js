@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import userService from "@/services/staff.service";
 import router from "@/router";
+import staffService from "@/services/staff.service";
 export const useUserStore = defineStore('userStore', {
     state:() => ({
         user: null,
@@ -19,8 +19,8 @@ export const useUserStore = defineStore('userStore', {
             this.user = null;
             this.login = false;
             this.book = [];
-            await userService.logout(); 
-            await router.push("/");
+            await staffService.logout(); 
+            await router.push("/login");
             // Xóa dữ liệu trong session storage ở đây
         }
     },

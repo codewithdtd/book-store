@@ -1,5 +1,6 @@
 <template>
     <div class="login">
+        <!-- <Notification :message="message"></Notification> -->
         <h1 class="login__title">Book Store - Trang quản lý</h1>
         <div class="image">
             <!-- <img src="" alt=""> -->
@@ -9,27 +10,27 @@
                 <h1>ĐĂNG KÝ</h1>
                 <div class="login__info__item">
                     <i class="ri-user-line"></i>
-                    <input type="text" v-model="sodienthoai" placeholder="Họ tên">
+                    <input required type="text" v-model="hoten" placeholder="Họ tên">
                 </div>
                 <div class="login__info__item">
                     <i class="ri-briefcase-line"></i>
-                    <input type="text" v-model="sodienthoai" placeholder="Chức vụ">
+                    <input required type="text" v-model="chucvu" placeholder="Chức vụ">
                 </div>
                 <div class="login__info__item">
                     <i class="ri-home-4-line"></i>
-                    <input type="text" v-model="sodienthoai" placeholder="Điạ chỉ">
+                    <input required type="text" v-model="diachi" placeholder="Điạ chỉ">
                 </div>
                 <div class="login__info__item">
                     <i class="ri-phone-line"></i>
-                    <input type="text" v-model="sodienthoai" placeholder="Số điện thoại">
+                    <input required type="text" v-model="sodienthoai" placeholder="Số điện thoại">
                 </div>
                 <div class="login__info__item">
                     <i class="ri-lock-line"></i>
-                    <input type="password" v-model="password" placeholder="Mật khẩu">
+                    <input required type="password" v-model="password" placeholder="Mật khẩu">
                 </div>
                 <div class="login__info__item">
                     <i class="ri-lock-line"></i>
-                    <input type="password" v-model="password" placeholder="Xác nhận mật khẩu">
+                    <input required type="password" v-model="password_comfirm" placeholder="Xác nhận mật khẩu">
                 </div>
                 <p>Đã có tài khoản? <router-link to="/login" class="">Đăng nhập</router-link></p>
                 <button class="m-1 btn btn-info">Đăng ký</button>
@@ -39,35 +40,56 @@
 </template>
 
 <script>
-import { useUserStore } from '@/stores/userStore';
 import userService from '@/services/staff.service';
-
+import Notification from '@/components/Notification.vue';
 export default {
+    components: {
+        Notification
+    },
     methods: {
+        reset() {
+            this.hoten = '';
+            this.sodienthoai = '';
+            this.password = '';
+            this.password_comfirm = '';
+            this.chucvu = '';
+            this.diachi ='';
+            this.register = null;
+            this.message = '';
+        },
         async handleSubmit() {
             const data = {
+                hoten: this.hoten,
+                chucvu: this.chucvu,
+                diachi: this.diachi,
                 sodienthoai: this.sodienthoai,
-                password: this.password,
+                password: this.password
             }
             try {
-                const user = await userService.login(data);
-                const { accessToken, ...orther } = user;
-                this.userStore.setUser(orther)
-                router.push('/')
-            } catch (e) {
-                error.value = 'Sai';
-                console.log(e);
+                if(await userService.register(data)){
+                    this.message = "Thành công";
+                    window.alert('Thành công');
+                    console.log(this.message);
+                    this.reset();
+                }
+            } catch (error) {
+                console.log(error);
             }
 
         }
     },
     data() {
         return {
-            userStore: useUserStore(),
+            hoten: '',
             sodienthoai: '',
             password: '',
+            password_comfirm: '',
+            chucvu: '',
+            diachi:'',
+            register: null,
+            message: '',
         }
-    },
+    }
 }
 </script>
 
@@ -126,11 +148,12 @@ export default {
 
 .login .form form {
     position: relative;
-    background-color: #7dc2ffb4;
+    background-color: #7dc2ff;
     border-radius: 10px;
     padding: 20px 20px;
     width: fit-content;
     backdrop-filter: blur(4px);
+    box-shadow: 1px 5px 10px #888888;
 }
 
 @media screen and (max-width: 820px ) {

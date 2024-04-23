@@ -48,6 +48,10 @@ export default {
     /* margin: 10px 20px 10px 10px; */
 }
 
+.error {
+    background-color: rgb(255, 210, 210) !important;
+    border-color: red !important;
+}
 /* .app-view {
     flex-grow: 1;
 } */
