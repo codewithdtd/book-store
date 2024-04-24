@@ -30,8 +30,6 @@ export default {
 <style>
 .notification {
     position: fixed;
-    /* background-color: #00000072;
-    border: 2px solid #000000; */
     border-radius: 5px;
     height: 100vh;
     width: 100vw;

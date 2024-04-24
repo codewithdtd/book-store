@@ -3,7 +3,7 @@
         <h1 class="navigation__title">Book</h1>
         <ul class="navigation__link">
             <li class="navigation__link__items">
-                <router-link class="navigation__link__items__route" to="/"><i class="ri-dashboard-line"></i> <span>Tổng quan</span></router-link>
+                <router-link class="navigation__link__items__route" to="/"><i class="ri-dashboard-line"></i> <span>Nhà xuất bản</span></router-link>
             </li>
             <li class="navigation__link__items"><router-link to="/products" class="navigation__link__items__route"><i class="ri-book-line"></i> <span>Sản phẩm</span></router-link></li>
             <li class="navigation__link__items">
@@ -12,7 +12,6 @@
                     <span>Đơn hàng</span>
                 </router-link>
             </li>
-            <li class="navigation__link__items"><router-link to="/customers" class="navigation__link__items__route"><i class="ri-user-3-line"></i> <span>Khách hàng</span></router-link></li>
             <li class="navigation__link__items" @click="userStore.logout()"><a class="navigation__link__items__route"><i class="ri-logout-box-r-line"></i> <span>Đăng xuất</span></a></li>
         </ul>
     </div>

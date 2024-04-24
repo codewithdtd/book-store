@@ -32,6 +32,9 @@ router.route("/publisher")
     .get(AuthToken.verifyTokenAdmin, staff.findAllPublisher)
     .post(AuthToken.verifyTokenAdmin, staff.addPublisher)
     .put(AuthToken.verifyTokenAdmin, staff.updatePublisher)
-    .delete(AuthToken.verifyTokenAdmin, staff.deletePublisher)
+    // .delete(AuthToken.verifyTokenAdmin, staff.deletePublisher)
+
+router.route("/publisher/:id").delete(AuthToken.verifyTokenAdmin, staff.deletePublisher)
+
     // .delete(AuthToken.verifyTokenAdminAdmin, user.delete);
 module.exports = router;

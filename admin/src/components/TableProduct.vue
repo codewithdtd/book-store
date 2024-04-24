@@ -6,22 +6,12 @@
             <div class="table__title__item col-sm-2">HÌNH ẢNH</div>
             <div class="table__title__item col-sm-2">
                 TÊN
-                <div class="filter" @click="handleSort('name')">
-                    <i v-if="sort_name" class="ri-arrow-up-fill table__icon"></i>
-                    <i v-else class="ri-arrow-down-fill table__icon"></i>
-                </div>
             </div>
             <div class="table__title__item col-sm-2">GIÁ
-                <div class="filter" @click="handleSort('price')">
-                    <i v-if="sort_price" class="ri-arrow-up-fill table__icon"></i>
-                    <i v-else class="ri-arrow-down-fill table__icon"></i>
-                </div>
+                
             </div>
             <div class="table__title__item col-sm-2">SỐ LƯỢNG
-                <div class="filter" @click="handleSort('quantity')">
-                    <i v-if="sort_quantity" class="ri-arrow-up-fill table__icon"></i>
-                    <i v-else class="ri-arrow-down-fill table__icon"></i>
-                </div>
+
             </div>
             <div class="table__title__item col-sm-2"></div>
         </div>
@@ -56,6 +46,9 @@ export default {
     watch: {
         change(newValue, oldValue) {
             console.log('new'+newValue)
+        },
+        list(newValue) {
+            this.getAllProduct();
         }
     },
     methods: {
@@ -153,7 +146,7 @@ export default {
 }
 
 .table__list__item i {
-    color: #fff;
+    color: var(--color-main);
     font-size: 1.3rem;
     padding: 7px;
     border-radius: 50%;

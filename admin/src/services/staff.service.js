@@ -18,5 +18,27 @@ class StaffService {
         const user = (await this.api.post("/logout")).data; 
         return user;
     }
+    // ORDER
+    async getAllOrder() {
+        return (await this.api.get("/order")).data;
+    }
+    async updateOrder(data) {
+        return (await this.api.put("/order",data)).data;
+    }
+
+    // Publisher 
+    async getAllPublisher() {
+        return (await this.api.get("/publisher")).data;
+    }
+    async addPublisher(data) {
+        return (await this.api.post("/publisher",data)).data;
+    }
+    async updatePublisher(data) {
+        console.log(data)
+        return (await this.api.put("/publisher",data)).data;
+    }
+    async deletePublisher(data) {
+        return (await this.api.delete("/publisher/"+data._id)).data;
+    }
 }
 export default new StaffService();

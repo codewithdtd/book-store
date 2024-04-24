@@ -302,7 +302,7 @@ exports.updateCart = async (req, res, next) => {
         else 
             return res.json({message: "Quá số lượng"})
     } catch (error) {
-        // console.log(error)
+        console.log(error)
         return next(new ApiError(
             500, "Đã có lỗi xảy ra!"
         ))
@@ -345,7 +345,6 @@ exports.addOrder = async (req, res, next) => {
         const user = req.user.user._id;
 
         order.userId = user;
-        console.log(user);
 
         const cartService = new CartService(MongoDB.client);
         const orderService = new OrderService(MongoDB.client);
@@ -366,7 +365,7 @@ exports.updateOrder = async (req, res, next) => {
     try {
         const order = req.body;
         const orderService = new OrderService(MongoDB.client);
-
+        
         const updateOrder = await orderService.update(order._id,order)
         return res.json(updateOrder)
     } catch (error) {
@@ -393,17 +392,18 @@ exports.findAllOrderUser = async (req, res, next) => {
 }
 
 exports.findAllOrder = async (req, res, next) => {
+    let AllOrder = [];
     try {
         const orderService = new OrderService(MongoDB.client);
 
-        const AllOrder = await orderService.findAll()
-        return res.json(AllOrder)
+        AllOrder = await orderService.findAll();
     } catch (error) {
         console.log(error)
         return next( new ApiError(
             500, "Đã có lỗi xảy ra!"
         ))
     }
+    return res.send(AllOrder)
 }
 
 exports.findAllPublisher = async (req, res, next) => {
@@ -413,7 +413,7 @@ exports.findAllPublisher = async (req, res, next) => {
         const AllPublisher = await publisherService.find()
         return res.json(AllPublisher)
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         return next( new ApiError(
             500, "Đã có lỗi xảy ra!"
         ))
@@ -441,23 +441,23 @@ exports.updatePublisher = async (req, res, next) => {
     }
 
     try {
-        const staffService = new StaffService(MongoDB.client);
-        const document = await staffService.update(req.params.id, req.body);
+        const publisherService = new PublisherService(MongoDB.client);
+        const document = await publisherService.update(req.body._id, req.body);
         if (!document) {
             return next(new ApiError(404, "Not found"));
         }
         return res.send(document);
     } catch (error) {
         return next(
-            new ApiError(500, `Error with id=${req.params.id}`)
+            new ApiError(500, `Error with id=${req.body._id}`)
         );
     }
 }
 
 exports.deletePublisher = async (req, res, next) => {
     try {
-        const staffService = new StaffService(MongoDB.client);
-        const document = await staffService.delete(req.params.id);
+        const publisherService = new PublisherService(MongoDB.client);
+        const document = await publisherService.delete(req.params.id);
         if (!document) {
             return next(new ApiError(404, "Not found"));
         }

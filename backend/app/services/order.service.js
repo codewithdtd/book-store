@@ -9,8 +9,9 @@ class OrderService {
             docgia: payload.docgia,
             sach: payload.sach,
             tongtien: payload.tongtien,
-            ngaymmuon: payload.ngaymmuon,
+            ngaymuon: payload.ngaymuon,
             ngaytra: payload.ngaytra,
+            trangthai: payload.trangthai,
         };
         // Remove undefined fields
         Object.keys(order).forEach(
@@ -39,7 +40,7 @@ class OrderService {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
         const update = this.infoOrder(payload);
-        update.ngaytra = new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear() + ' ' + new Date().getHours() +':' + new Date().getMinutes() + ':' + new Date().getSeconds();
+        // update.ngaytra = new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear() + ' ' + new Date().getHours() +':' + new Date().getMinutes() + ':' + new Date().getSeconds();
         const result = await this.Order.findOneAndUpdate(
             filter,
             { $set: update },

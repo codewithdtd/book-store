@@ -227,8 +227,8 @@ exports.addCart = async (req,res,next) => {
         else if(findCart && countProduct.soluong >= cartItem.soluong) {
             countProduct.soluong = countProduct.soluong - cartItem.soluong;
             findCart.soluong+=cartItem.soluong;
-            const total = cartItem.dongia*cartItem.soluong+findCart.dongia;
-            findCart.dongia = total;
+            const total = cartItem.dongia*cartItem.soluong+findCart.gia;
+            findCart.gia = total;
             // cartItems.push(cartItem)
             const updateBook = await bookService.update(cartItem.sach._id,countProduct)
             const addtoCart = await cartService.updatesoluong(findCart);

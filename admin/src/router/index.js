@@ -1,7 +1,7 @@
 import { createWebHistory, createRouter } from "vue-router";
 import Login from "@/views/Login.vue";
 import Register from "@/views/Register.vue";
-import Home from "@/views/Home.vue";
+import Publisher from "@/views/Publisher.vue";
 import Products from "@/views/Products.vue";
 import Orders from "@/views/Orders.vue";
 import NotFound from "@/views/NotFound.vue"
@@ -12,8 +12,8 @@ import { useUserStore } from "@/stores/userStore";
 const routes = [
     {
         path: '/',
-        name: 'Tổng quan',
-        component: Home,
+        name: 'Nhà xuất bản',
+        component: Publisher,
         beforeEnter: (to, from, next) => {
             // Kiểm tra xem userStore có tồn tại không
             if (!useUserStore().login) {

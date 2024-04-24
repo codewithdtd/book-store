@@ -62,9 +62,13 @@ class PublisherService {
     }
 
     async delete(id) {
-        const result = await this.Publisher.findOneAndDelete({
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        });
+        const result = await this.Publisher.findOneAndUpdate(
+            {
+                _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
+            }, 
+            {$set: {"deleted": 1}},
+            { returnDocument: "after" }
+        );
        
         return result;
     }

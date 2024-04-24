@@ -22,7 +22,7 @@ const AuthToken = {
 
     verifyTokenAdmin: (req, res, next) => {
         AuthToken.verifyToken(req, res, () => {
-            if(req.user.id == req.params.id || req.user.role == "admin"){
+            if(req.user.id == req.params.id || req.user.user.role == "admin"){
                 return next();
             }
             else {
