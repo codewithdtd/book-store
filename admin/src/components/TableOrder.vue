@@ -25,7 +25,10 @@
             <div class="table__list__item col-sm-1">{{ item.tongtien.toLocaleString() }}</div>
             <div class="table__list__item col-sm-1">{{ item.ngaymuon }}</div>
             <div class="table__list__item col-sm-1">{{ item.ngaytra }}</div>
-            <div class="table__list__item col-sm-2 text-danger">
+            <div v-if="item.trangthai == 'Đã trả'" class="table__list__item col-sm-2 text-success">
+                {{ item.trangthai }}
+            </div>
+            <div v-else class="table__list__item col-sm-2 text-danger">
                 {{ item.trangthai }}
             </div>
             <div class="table__list__item col-sm-1">

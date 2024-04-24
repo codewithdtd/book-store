@@ -67,8 +67,10 @@ export default {
             this.tacgia = '';
             this.namxuatban = '';
             this.nhaxuatban = '';
-            this.dongia = '';
-            this.soluong = '';
+            this.dongia = 0;
+            this.soluong = 0;
+            this.hinhanh = null,
+            this.hinhanhPreview = null,
             this.product_form = !this.product_form;
         },
         handleEditProduct(product) {
@@ -82,6 +84,7 @@ export default {
             this.nhaxuatban = product.nhaxuatban;
             this.dongia = product.dongia;
             this.soluong = product.soluong;
+            this.hinhanhPreview = null;
             this.product_form = !this.product_form;
         },
         async handleSubmit() {
@@ -111,7 +114,7 @@ export default {
                 data.append('dongia', this.dongia);
                 data.append('soluong', this.soluong);
                 data.append('mota', this.mota);
-                this.hinhanh != null ? data.append('hinhanh', this.hinhanh) : data.append('hinhanh', this.product.hinhanh);
+                this.hinhanhPreview != null ? data.append('hinhanh', this.hinhanh) : data.append('hinhanh', this.product.hinhanh);
                 if(await ProductService.updateProduct(data)) {
                     this.product = data;
                     this.product_form = !this.product_form;
@@ -131,8 +134,8 @@ export default {
             product_form: false,
             product: {},
             ten: '',
-            dongia: '',
-            soluong: '',
+            dongia: 0,
+            soluong: 0,
             mota: '',
             _id: '',
             tacgia: '',

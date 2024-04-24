@@ -102,10 +102,13 @@ export default {
             return ngay_tra - ngay_muon < 7*24*60*60*1000; //7 ngày
         },
         async handleSubmit() {
+            if(!this.handlePhuthu)
+                this.phuthu = this.tongtien * 20 / 100;
             !this.phuthu ? this.tongtien = this.tongtien : this.tongtien = this.tongtien + this.tongtien * 20 / 100
             const data = {
                 _id: this.order._id,
                 ngaymuon: this.ngaymuon,
+                ngaytra: this.ngaytra,
                 docgia: this.docgia,
                 tongtien: this.tongtien,
                 sach: this.book,

@@ -25,7 +25,7 @@
                 <i class="ri-edit-line table__icon" @click="handleEmit(item)"></i>
             </div>
             <div class=" table__list__item table__list__item--delete col-sm-1">
-                <i class="ri-delete-bin-2-line table__icon" @click="handleDelete(item)"></i>
+                <i class="ri-delete-bin-2-line table__icon" @click="confirmDelete(item)"></i>
             </div>
         </div>
     </div>
@@ -75,6 +75,11 @@ export default {
         },
         handleEmit(product) {
             this.$emit('edit', product);
+        },
+        confirmDelete(product) {
+            if (window.confirm('Are you sure you want to delete this product?')) {
+                this.deleteProduct(product);
+            }
         },
         async handleDelete(product) {
             console.log(product)

@@ -27,7 +27,7 @@
                 <i class="ri-pencil-line" @click="handleEmit(item)"></i>
             </div>
             <div class=" table__list__item table__list__item--delete col-sm-1">
-                <i class="ri-delete-bin-2-line table__icon" @click="handleDelete(item)"></i>
+                <i class="ri-delete-bin-2-line table__icon" @click="confirmDelete(item)"></i>
             </div>
         </div>
     </div>
@@ -53,6 +53,11 @@ export default {
         },
         handleEmit(publisher) {
             this.$emit('edit', publisher);
+        },
+        confirmDelete(publisher) {
+            if (window.confirm('Are you sure you want to delete this publisher?')) {
+                this.handleDelete(publisher);
+            }
         },
         async handleDelete(publisher) {
             const data = {
