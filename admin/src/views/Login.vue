@@ -25,7 +25,7 @@
 
 <script>
 import { useUserStore } from '@/stores/userStore';
-import staffService from '@/services/staff.service';
+import StaffService from '@/services/staff.service';
 import router from '@/router';
 
 export default {
@@ -33,10 +33,11 @@ export default {
         async handleSubmit() {
             const data = {
                 sodienthoai: this.sodienthoai,
-                password: this.password,
+                password: this.password
             }
+ 
             try {
-                const user = await staffService.login(data);
+                const user = await StaffService.login(data);
                 if(user) {
                     const { accessToken, ...orther } = user;
                     this.userStore.setUser(orther)

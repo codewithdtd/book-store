@@ -34,7 +34,7 @@
                 </div>
                 <div class="product__form__item">
                     <p>Mô tả:</p>
-                    <textarea name="" id="" cols="30" rows="3">{{ mota }}</textarea>
+                    <textarea name="" id="" cols="30" rows="3" v-model="mota">{{ mota }}</textarea>
                 </div>
                 <div class="product__form__item">
                     <p>Hình ảnh:</p>
@@ -187,10 +187,12 @@ export default {
     border: none;
     font-weight: 400;
     font-size: 20px;
-    background-color: rgb(196, 255, 199);
+    background-color: rgb(57, 107, 255);
+    color: #fff;
+    margin-right: 10px;
 }
 .product__header__action button:hover {
-    background-color: #fff;
+    background-color: #081aa3;
 }
 
 .product__header__filter {
@@ -272,7 +274,7 @@ export default {
     width: 150px;
     height: 40px;
     border-radius: 12px;
-    background-color: #32a041;
+    background-color: var(--color-main);
     border: none;
     font-weight: 600;
     color: rgb(255, 255, 255);

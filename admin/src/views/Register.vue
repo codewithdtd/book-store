@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import userService from '@/services/staff.service';
+import staffService from '@/services/staff.service';
 import Notification from '@/components/Notification.vue';
 export default {
     components: {
@@ -66,7 +66,7 @@ export default {
                 password: this.password
             }
             try {
-                if(await userService.register(data)){
+                if(await staffService.register(data)){
                     this.message = "Thành công";
                     window.alert('Thành công');
                     console.log(this.message);

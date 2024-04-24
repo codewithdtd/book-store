@@ -12,6 +12,7 @@ class BookService {
             tacgia: payload.tacgia,
             soluong: payload.soluong,
             namxuatban: payload.namxuatban,
+            mota: payload.mota,
             soluong_muon: payload.soluong_muon,
             nhaxuatban: payload.nhaxuatban, 
             ngaytao: payload.ngaytao,
