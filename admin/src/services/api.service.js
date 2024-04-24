@@ -5,7 +5,8 @@ export default (baseURL) => {
     const api = axios.create({
         baseURL,
         headers: {
-            "Content-Type": "application/json",
+            // "Content-Type": "application/json",
+            "Content-Type": 'multipart/form-data',
             Accept: "application/json",
             // Kiểm tra xem token có tồn tại trong cookie không
             // Nếu có, thêm token vào headers

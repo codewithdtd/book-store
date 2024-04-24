@@ -35,11 +35,11 @@ export default {
     padding: 0;
     font-family: "Josefin Sans", sans-serif;
     background-repeat: no-repeat;
-    background-color: #c1c1c1;
+    background-color: #d4e5ff;
     background-size: cover;
     padding: 0;
-    --color-main: rgb(47, 160, 248);
-    --color-background: rgb(37, 37, 37);
+    --color-main: #13407f;
+    --color-background: rgb(255, 255, 255);
     display: flex;
 }
 

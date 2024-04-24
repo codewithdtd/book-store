@@ -39,7 +39,7 @@ router.route("/")
 
 router.route("/:id")
     .get(book.findOne)
-    .put(book.update)
+    .put(upload.single("hinhanh"),book.update)
     .delete(book.delete);
 
 module.exports = router;

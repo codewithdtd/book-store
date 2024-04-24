@@ -6,17 +6,19 @@ const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
     try {
         const bookService = new BookService(MongoDB.client);
-        const { ten, dongia, tacgia, soluong, namxuatban, nhaxuatban } = req.body;
+        console.log(req.body)
+        const { ten, dongia, tacgia, mota, soluong, namxuatban, nhaxuatban } = req.body;
         const newProduct = {
             ten: ten,
             dongia: dongia,
+            mota: mota,
             tacgia: tacgia,
             soluong: soluong,
             hinhanh: req.file.filename,
             namxuatban: namxuatban,
             nhaxuatban: nhaxuatban, 
         };
-        // console.log(newProduct);
+        console.log(newProduct);
         const document = await bookService.create(newProduct);
         return res.send(document);
     } catch (error) { 
@@ -73,6 +75,8 @@ exports.update = async (req, res, next) => {
 
     try {
         const bookService = new BookService(MongoDB.client);
+
+        if(req.file != null) req.body.hinhanh = req.file.filename;
         const document = await bookService.update(req.params.id, req.body);
         if (!document) {
             return next(new ApiError(404, "menu not found"));
