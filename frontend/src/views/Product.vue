@@ -38,16 +38,48 @@ export default {
     components: {
         Filter,
     },
-    async mounted() {
-        this.products = await ProductsService.getAll();
+    watch: {
+        '$route.query'(newValue) {
+            this.query = this.$route.query.search;
+            this.getData();
+        }
+    },
+    updated() {
+       this.getData();
+    },
+    mounted() {
+       this.getData();
+    },
+    computed: {
+        productStrings() {
+            return this.products.map((product) => {
+                const { ten, tacgia, mota, nhaxuatban } = product;
+                return [ten, tacgia, mota, nhaxuatban].join(" ").toUpperCase();
+            });
+        },
+        filteredProducts() {
+            if (this.query == '') return this.products;
+            return this.products.filter((_products, index) =>
+                    this.productStrings[index].includes(this.query.toUpperCase())
+            );
+        },
     },
     data() {
         return {
             products: [],
             message: '',
+            query: '',
         }
     },
     methods: {
+        async getData() {
+            this.products = await ProductsService.getAll();
+            this.products = this.products.filter(item => item.deleted == 0);
+        
+            if(this.query != '') {
+                this.products = this.filteredProducts;
+            }
+        },
         async addToCart(data) {
             if (!useUserStore().login) {
               // Hiển thị thông báo yêu cầu đăng nhập

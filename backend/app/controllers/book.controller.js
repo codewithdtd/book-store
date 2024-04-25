@@ -33,15 +33,15 @@ exports.findAll = async (req, res, next) => {
 
     try {
         const bookService = new BookService(MongoDB.client);
-        const { name } = req.query;
-        if (name) {
-            documents = await bookService.findByName(name);
+        const { q } = req.query;
+        if (q) {
+            documents = await bookService.findByQuery(q);
         } else {
             documents = await bookService.find({});
         }
     } catch (error) {
         return next(
-            new ApiError(500, "An error occurred while retrieving menus")
+            new ApiError(500, "An error occurred while retrieving book")
         ); 
     }
     return res.send(documents);

@@ -9,6 +9,9 @@ class ProductService {
     async getOne(id) {
         return (await this.api.get("/"+id)).data;
     }
+    async search(id) {
+        return (await this.api.get("/"+id)).data;
+    }
 
 }
 export default new ProductService();

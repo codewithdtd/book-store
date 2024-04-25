@@ -36,5 +36,8 @@ class UserService {
     async addOrder(data) {
         return (await this.api.post("/order", data)).data;
     }
+    async getAllOrder() {
+        return (await this.api.get("/order")).data;
+    }   
 }
 export default new UserService();

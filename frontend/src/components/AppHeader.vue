@@ -42,8 +42,7 @@
                 <div v-else class="header__function__item header__function__info header__function__info--auth">
                     <p><i class="fa-regular fa-user"></i>{{ userStore.user.ho +' '+ userStore.user.ten }}</p>
                     <div class="header__function__info__nav">
-                        <!-- <p>Thông tin</p>
-                        <p>Đơn hàng</p> -->
+                        <router-link to="/order">Đơn hàng</router-link>
                         <button class="btn btn-outline-info" @click="userStore.logout()"><i class="fa-solid fa-right-from-bracket"></i></button>
                     </div>
                 </div>
@@ -104,7 +103,7 @@ export default {
 }
 .header__logo__title {
     font-family: "Satisfy", cursive;
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 700;
     text-decoration: none;
     color: var(--color-main);

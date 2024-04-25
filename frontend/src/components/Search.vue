@@ -1,10 +1,11 @@
 <template>
-    <div class="header__function__search col-sm-5">
-        <button @click="searchBook">
+    <div @keyup.enter="searchBook" class="header__function__search col-sm-5">
+        <button>
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
         <input type="text" class="search__input" placeholder="tìm kiếm" v-model="search" @keyup="searchBook">
-        <div class="search__response" v-if="this.search !== ''">
+        <span v-if="search" @click="this.search = ''">x</span>
+        <div class="search__response" v-if="this.search">
             <p v-for="item in filteredProducts" :key="item">
                 <router-link @click="this.search = ''" :to="{name: 'DetailProduct', params: { id: item._id }}">{{ item.ten }}</router-link>
             </p>
@@ -14,7 +15,7 @@
 
 <script>
 import ProductService from '@/services/book.service';
-
+import router from '@/router';
 export default {
     async mounted() {
         this.book = await ProductService.getAll();
@@ -35,9 +36,11 @@ export default {
         },
     },
     methods: {
-        searchBook() {
-            
-        }
+        searchBook(event) {
+            if(event.key === 'Enter')
+                router.push('/product?search='+this.search)
+            // if(this.search == '')
+        },
     },
     data() {
         return {
@@ -59,6 +62,25 @@ export default {
     height: 35px;
     background-color: #d2d2d2;
     outline: none;
+    padding-right: 18%;
+}
+
+.header__function__search span {
+    /* background-color: #d2d2d2; */
+    font-size: 1.4rem;
+    font-weight: 300;
+    right: 11%;
+    position: absolute;
+    /* background-color: aqua; */
+    color: #5a5959;
+    width: 30px;
+    text-align: center;
+}
+
+.header__function__search span:hover {
+    background-color: #9b9b9b;
+    border-radius: 50%;
+    cursor: pointer;
 }
 
 .header__function__search button {

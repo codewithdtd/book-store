@@ -64,7 +64,7 @@ class OrderService {
 
     async findAllOrderUser(id) {
         const filter = {
-            docgia: id,
+            "docgia._id": id,
         };
         const result = await this.Order.find(filter);
         return result.toArray();
