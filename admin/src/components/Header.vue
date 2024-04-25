@@ -4,9 +4,6 @@
             <p>{{ this.$route.name }}</p>
         </div>
         <div class="header__right">
-            <div class="header__item header__notify">
-                <i class="ri-notification-3-line"></i>
-            </div>
             <div class="header__item header__user">
                 <i class="ri-user-line"></i> 
             </div>

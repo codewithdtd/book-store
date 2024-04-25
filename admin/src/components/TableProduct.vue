@@ -1,4 +1,8 @@
 <template>
+    <div class="header__search">
+        <i class="ri-search-line"></i>
+        <input type="text" placeholder="Tìm kiếm" v-model="search" @keyup="getAllProduct">
+    </div>
     <div class="tables">
         <div class="table__name">{{ nameTable }}</div>
         <div class="table__title row" >
@@ -33,28 +37,46 @@
 <script>
 import Image from '@/components/Image.vue';
 import ProductService from '@/services/product.service.js'
+import router from '@/router';
 export default {
     props: [
-        "nameTable", "change"
+        "nameTable",
     ],
     mounted() {
-        this.getAllProduct()
+        this.getAllProduct();
+        // this.query = this.$route.query.search;
     },
     components: {
         Image
     },
     watch: {
-        change(newValue, oldValue) {
-            console.log('new'+newValue)
-        },
         list(newValue) {
             this.getAllProduct();
-        }
+        },
+    },
+    emits: ['edit'],
+    computed: {
+        productStrings() {
+            return this.list.map((product) => {
+                const { ten, tacgia, mota, nhaxuatban } = product;
+                return [ten, tacgia, mota, nhaxuatban].join(" ").toUpperCase();
+            });
+        },
+        filteredProducts() {
+            if (this.search == '') return this.list;
+            return this.list.filter((_products, index) =>
+                    this.productStrings[index].includes(this.search.toUpperCase())
+            );
+        },
     },
     methods: {
         async getAllProduct() {
             this.list = await ProductService.getAll();
             this.list = this.list.filter(item => item.deleted == 0);
+
+            if(this.search != '') {
+                this.list = this.filteredProducts;
+            }
         },
         handleSort(item) {
             if(item == 'name') {
@@ -93,6 +115,8 @@ export default {
             sort_name: false,
             sort_price: false,
             sort_quantity: false,
+            search: '',
+            query: '',
         }
     }
 }
@@ -183,6 +207,17 @@ export default {
     padding-left: 0px;
 }
 
+.header__search {
+    background-color: white;
+    padding: 0 4px;
+    border-radius: 7px;
+    width: fit-content;
+}
+
+.header__search input {
+    outline: none;
+    border: none;
+}
 
 
 </style>

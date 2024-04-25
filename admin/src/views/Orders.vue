@@ -1,10 +1,7 @@
 <template>
     <div class="order">
         <div class="order__header">
-            <div class="order__header__search">
-                <i class="ri-search-line"></i>
-                <input type="text" placeholder="Tìm kiếm">
-            </div>
+           
         </div>
         <div class="order__form" :class="{'order__form--active': order_form }">
             <form action="" @submit.prevent="handleSubmit">

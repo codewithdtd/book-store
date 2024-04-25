@@ -1,10 +1,6 @@
 <template>
     <div class="product">
         <div class="product__header">
-            <div class="product__header__search">
-                <i class="ri-search-line"></i>
-                <input type="text" placeholder="Tìm kiếm">
-            </div>
             <div class="product__header__action">
                 <button @click="handlePublisher">+</button>
             </div>

@@ -1,10 +1,6 @@
 <template>
     <div class="product">
         <div class="product__header">
-            <div class="product__header__search">
-                <i class="ri-search-line"></i>
-                <input type="text" placeholder="Tìm kiếm">
-            </div>
             <div class="product__header__action">
                 <button @click="handleProduct">+</button>
             </div>
@@ -22,7 +18,11 @@
                 </div>
                 <div class="product__form__item">
                     <p>Nhà xuất bản:</p>
-                    <input required type="text" v-model="nhaxuatban">
+                    <!-- <input required type="text" v-model="nhaxuatban"> -->
+                    <select name="" v-model="nhaxuatban" id="">
+                        <option :value="product.nhaxuatban" selected>{{ product.nhaxuatban }}</option>
+                        <option v-for="item in publisher" :value="item.ten">{{ item.ten }}</option>
+                    </select>
                     <p>Năm xuất bản:</p>
                     <input required type="text" v-model="namxuatban">
                 </div>
@@ -53,6 +53,7 @@
 <script>
 import TableProduct from '@/components/TableProduct.vue'
 import ProductService from '@/services/product.service.js'
+import staffService from '@/services/staff.service';
 
 export default {
     components: {
@@ -127,10 +128,14 @@ export default {
             this.hinhanhPreview = URL.createObjectURL(img);
         }
     },
-    mounted() {
+    async mounted() {
+        this.publisher = await staffService.getAllPublisher();
+        this.publisher = this.publisher.filter(item => item.deleted != 1);
+
     },
     data() {
         return {
+            publisher: '',
             product_form: false,
             product: {},
             ten: '',
@@ -170,12 +175,9 @@ export default {
 .product__header__action {
     display: flex;
     align-items: center;
-}
-
-.product__header__search {
-    background-color: white;
-    padding: 0 4px;
-    border-radius: 7px;
+    position: absolute;
+    right: 20px;
+    top: 35px;
 }
 
 .product__header__search input:focus, .product__header__filter select:focus {

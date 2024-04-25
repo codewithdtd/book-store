@@ -1,4 +1,8 @@
 <template>
+    <div class="header__search">
+        <i class="ri-search-line"></i>
+        <input type="text" placeholder="Tìm kiếm" v-model="search" @keyup="getAllProduct">
+    </div>
     <div class="tables">
         <div class="table__name">{{ nameTable }}</div>
         <div class="table__title row" >
@@ -51,9 +55,27 @@ export default {
     mounted() {
         this.getAllOrder()
     },
+    computed: {
+        productStrings() {
+            return this.list.map((product) => {
+                const { ho, ten, diachi, sodienthoai } = product.docgia;
+                const { ngaymuon, ngaytra, trangthai } = product;
+                return [ten, ho,diachi, sodienthoai, trangthai, ngaymuon, ngaytra ].join(" ").toUpperCase();
+            });
+        },
+        filteredProducts() {
+            if (this.search == '') return this.list;
+            return this.list.filter((_products, index) =>
+                    this.productStrings[index].includes(this.search.toUpperCase())
+            );
+        },
+    },
     methods: {
         async getAllOrder() {
             this.list = await StaffService.getAllOrder();
+            if(this.search != '') {
+                this.list = this.filteredProducts;
+            }
         },
         handleEmit(product) {
             this.$emit('edit', product);
@@ -62,6 +84,7 @@ export default {
     data() {
         return {
             list: [],
+            search: ''
         }
     }
 }
