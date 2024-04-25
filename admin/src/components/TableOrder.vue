@@ -62,8 +62,8 @@ export default {
         productStrings() {
             return this.list.map((product) => {
                 const { ho, ten, diachi, sodienthoai } = product.docgia;
-                const { ngaymuon, ngaytra, trangthai } = product;
-                return [ten, ho,diachi, sodienthoai, trangthai, ngaymuon, ngaytra ].join(" ").toUpperCase();
+                const { ngaymuon, ngaytra, trangthai, _id } = product;
+                return [ten, ho,diachi, _id, sodienthoai, trangthai, ngaymuon, ngaytra ].join(" ").toUpperCase();
             });
         },
         filteredProducts() {

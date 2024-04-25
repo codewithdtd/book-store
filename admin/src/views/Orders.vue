@@ -16,6 +16,10 @@
                     <span>{{ docgia.ho + ' ' + docgia.ten }}</span>
                 </div>
                 <div class="order__form__item">
+                    <p>Số điện thoại:</p>
+                    <span>{{ docgia.sodienthoai }}</span>
+                </div>
+                <div class="order__form__item">
                     <p>Sách:</p>
                 </div>
                 <div class="order__form__item order__form__item__book" v-for="(item,index) in book">
@@ -23,7 +27,7 @@
                 </div>
                 <div class="order__form__item">
                     <p>Tổng tiền:</p>
-                    <span>{{ order.tongtien }}</span>
+                    <span>{{ order.tongtien.toLocaleString() }}VNĐ</span>
                 </div>
                 <div class="order__form__item">
                     <p>Ngày mượn:</p>
@@ -31,12 +35,13 @@
                 </div>
                 <div class="order__form__item">
                     <p>Ngày trả:</p>
-                    <input type="date" v-model="ngaytra" @change="handlePhuthu">
+                    <input v-if="order.trangthai != 'Đã trả'" type="date" v-model="ngaytra" @change="handlePhuthu">
+                    <input v-else disabled type="date" v-model="ngaytra" @change="handlePhuthu">
                 </div>
                 <div class="order__form__item">
                     <p>Trạng thái:</p>
-                    <!-- <input type="text" v-model="order.trangthai"> -->
-                    <select name="" id="" v-model="trangthai">
+                    <input v-if="order.trangthai == 'Đã trả'" disabled type="text" v-model="order.trangthai">
+                    <select v-else name="" id="" v-model="trangthai">
                         <option :value="order.trangthai" selected>{{ order.trangthai }}</option>
                         <option value="Đã duyệt">Đã duyệt</option>
                         <option value="Đang mượn">Đang mượn</option>
@@ -46,7 +51,8 @@
                 </div>
                 <div class="order__form__item">
                     <p>Phụ thu:</p>
-                    <input type="checkbox" v-model="phuthu">
+                    <input v-if="order.trangthai != 'Đã trả'" type="checkbox" v-model="phuthu">
+                    <input v-else disabled type="checkbox" v-model="phuthu">
                 </div>
                 <p v-if="phuthu">Phụ thu: {{ tongtien*20/100 }} Tổng tiền: {{ tongtien + tongtien*20/100 }}</p>
                 <button>Cập nhật</button>
@@ -236,7 +242,7 @@ export default {
 .order__form__item {
     display: flex;
     justify-content: space-between;
-    padding: 10px 15px;
+    padding: 2px 15px;
     text-align: start;
 }
 .order__form__item p {
