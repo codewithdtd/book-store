@@ -19,7 +19,7 @@
                     <p>Sách:</p>
                 </div>
                 <div class="order__form__item order__form__item__book" v-for="(item,index) in book">
-                    <span>{{ index+1+'. ' + item.sach.ten + ' ' + item.soluong + ' quyển ' + item.gia.toLocaleString() + 'VNĐ' }}</span>
+                    <span>{{ index+1+'. ' + item.sach.ten + ' x' + item.soluong + ' quyển ' + item.gia.toLocaleString() + 'VNĐ' }}</span>
                 </div>
                 <div class="order__form__item">
                     <p>Tổng tiền:</p>
@@ -218,6 +218,7 @@ export default {
     height: fit-content;
     text-align: center;
     border-radius: 20px;
+    font-weight: 300;
     color: #fff;
     padding: 20px 0;
     /* border: 2px solid; */

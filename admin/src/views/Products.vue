@@ -162,6 +162,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    text-wrap: wrap;
 }
 
 .product__header input {

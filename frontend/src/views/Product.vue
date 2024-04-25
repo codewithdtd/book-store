@@ -6,7 +6,7 @@
             </div>
         </div>
         <div class="products__product col-lg-10 col-md-9 col-12">
-            <Filter @sort="sort" @filter="filter" @range="range" />
+            <Filter @sort="sort" @range="range" />
             <div class="products__product__list" v-if="products.length>0">
                 <div class="products__product__item col-lg-2 col-3" v-for="item in products">
                     <router-link :to="{ path: '/product/' + item._id}" class="products__product__item__image">
@@ -15,10 +15,10 @@
                     
                     <div class="products__product__item__information">
                         <p class="products__product__item__name">{{ item.ten }}</p>
-                        <p class="products__product__item__price">{{ item.dongia.toLocaleString() }}</p>
+                        <p class="products__product__item__price">{{ parseInt(item.dongia).toLocaleString() }}</p>
                     </div>
                     <div class="products__product__item__button">
-                        <button v-if="item.soluong > 0" @click="addToCart(item)">Mua</button>
+                        <button v-if="item.soluong > 0" @click="addToCart(item)">Mượn</button>
                         <button v-else class="btn btn-secondary" disabled>Hết hàng</button>
                         <router-link :to="{ path: '/product/' + item._id}">Xem thêm</router-link>
                     </div>
@@ -42,10 +42,9 @@ export default {
         '$route.query'(newValue) {
             this.query = this.$route.query.search;
             this.getData();
-        }
-    },
-    updated() {
-       this.getData();
+        },
+
+
     },
     mounted() {
        this.getData();
@@ -79,6 +78,7 @@ export default {
             if(this.query != '') {
                 this.products = this.filteredProducts;
             }
+
         },
         async addToCart(data) {
             if (!useUserStore().login) {
@@ -111,12 +111,9 @@ export default {
             else 
                 this.products = await ProductsService.getAll();
         },   
-        async filter(data) {
-            // this.products = data != '' ? await productsService.getByCategory(data): await productsService.getAll();    
-        },
         async range(data) {
             this.products = await ProductsService.getAll();
-            this.products = this.book.filter(item => item.dongia <= data)
+            this.products = this.products.filter((item) => parseInt(item.dongia) < parseInt(data));
         }  
     }
 }   

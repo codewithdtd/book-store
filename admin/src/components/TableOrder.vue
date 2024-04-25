@@ -32,7 +32,10 @@
             <div v-if="item.trangthai == 'Đã trả'" class="table__list__item col-sm-2 text-success">
                 {{ item.trangthai }}
             </div>
-            <div v-else class="table__list__item col-sm-2 text-danger">
+            <div v-else-if="item.trangthai == 'Quá hạn'" class="table__list__item col-sm-2 text-danger">
+                {{ item.trangthai }}
+            </div>
+            <div v-else class="table__list__item col-sm-2 text-primary">
                 {{ item.trangthai }}
             </div>
             <div class="table__list__item col-sm-1">

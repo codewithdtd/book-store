@@ -10,7 +10,7 @@
         </div>
         <div class="filter__range">
             Mức giá: 0
-            <input @change="filterPrice" class="" type="range" v-model="price" min="50000" max="600000"> {{ formatPrice }} VNĐ
+            <input @change="filterPrice" class="" type="range" v-model="price" min="0" max="100000"> {{ formatPrice }} VNĐ
         </div>
     </div>
 </template>

@@ -10,7 +10,7 @@
             <p>{{ item.mota }}</p>
             <p>Tác giả: {{ item.tacgia }}</p>
             <p>Nhà xuất bản: {{ item.nhaxuatban }}</p>
-            <p>Giá: <span style="color: var(--color-main);font-weight: 700;">{{ item.dongia.toLocaleString() }}</span></p>
+            <p>Giá: <span style="color: var(--color-main);font-weight: 700;">{{ parseInt(item.dongia).toLocaleString() }}</span></p>
             <p>Số lượng còn lại: {{ item.soluong }}</p>
             <input type="number" min="1" v-model="quanlity">
             <button class="btn btn-info" @click="addToCart(this.item)">Thêm vào giỏ hàng</button>

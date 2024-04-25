@@ -22,7 +22,7 @@
                 </div>
                 <div class="login__info__item">
                     <i class="ri-phone-line"></i>
-                    <input required type="text" v-model="sodienthoai" placeholder="Số điện thoại">
+                    <input required type="text" v-model="sodienthoai" placeholder="Số điện thoại" minlength="10" maxlength="10">
                 </div>
                 <div class="login__info__item">
                     <i class="ri-lock-line"></i>

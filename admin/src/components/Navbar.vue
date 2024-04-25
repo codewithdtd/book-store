@@ -9,7 +9,7 @@
             <li class="navigation__link__items">
                 <router-link class="navigation__link__items__route" to="/orders">
                     <i class="ri-bill-line"></i> 
-                    <span>Đơn hàng</span>
+                    <span>Phiếu theo dõi</span>
                 </router-link>
             </li>
             <li class="navigation__link__items" @click="userStore.logout()"><a class="navigation__link__items__route"><i class="ri-logout-box-r-line"></i> <span>Đăng xuất</span></a></li>

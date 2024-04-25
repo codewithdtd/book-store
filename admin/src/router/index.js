@@ -64,7 +64,7 @@ const routes = [
     },
     {
         path: "/orders",
-        name: "Đơn hàng",
+        name: "Phiếu theo dõi",
         component: Orders,
         beforeEnter: (to, from, next) => {
             // Kiểm tra xem userStore có tồn tại không
