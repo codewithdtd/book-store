@@ -26,7 +26,7 @@
             <div class="table__list__item col-sm-2">
                 {{ item.docgia.ho+' '+item.docgia.ten }}
             </div>
-            <div class="table__list__item col-sm-1">{{ item.tongtien.toLocaleString() }}</div>
+            <div class="table__list__item col-sm-1">{{ item.tongtien }}</div>
             <div class="table__list__item col-sm-1">{{ item.ngaymuon }}</div>
             <div class="table__list__item col-sm-1">{{ item.ngaytra }}</div>
             <div v-if="item.trangthai == 'Đã trả'" class="table__list__item col-sm-2 text-success">

@@ -23,11 +23,11 @@
                     <p>Sách:</p>
                 </div>
                 <div class="order__form__item order__form__item__book" v-for="(item,index) in book">
-                    <span>{{ index+1+'. ' + item.sach.ten + ' x' + item.soluong + ' quyển ' + item.gia.toLocaleString() + 'VNĐ' }}</span>
+                    <span>{{ index+1+'. ' + item.sach.ten + ' x' + item.soluong + ' quyển ' + item.gia + 'VNĐ' }}</span>
                 </div>
                 <div class="order__form__item">
                     <p>Tổng tiền:</p>
-                    <span>{{ order.tongtien.toLocaleString() }}VNĐ</span>
+                    <span>{{ order.tongtien }}VNĐ</span>
                 </div>
                 <div class="order__form__item">
                     <p>Ngày mượn:</p>
