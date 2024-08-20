@@ -1,19 +1,18 @@
 const BookService = require("../services/book.service");
 const PublisherService = require("../services/publisher.service");
-const MongoDB = require("../utils/mongodb.util");
 const ApiError = require("../api-error")
 
 exports.create = async (req, res, next) => {
     try {
-        const bookService = new BookService(MongoDB.client);
+        const bookService = new BookService();
         console.log(req.body)
         const { ten, dongia, tacgia, mota, soluong, namxuatban, nhaxuatban } = req.body;
         const newProduct = {
             ten: ten,
-            dongia: dongia,
+            dongia: parseInt(dongia),
             mota: mota,
             tacgia: tacgia,
-            soluong: soluong,
+            soluong: parseInt(soluong),
             hinhanh: req.file.filename,
             namxuatban: namxuatban,
             nhaxuatban: nhaxuatban, 
@@ -22,6 +21,7 @@ exports.create = async (req, res, next) => {
         const document = await bookService.create(newProduct);
         return res.send(document);
     } catch (error) { 
+        console.log(error)
         return next(
             new ApiError(500, "Đã có lỗi xảy ra trong quá trình tạo sản phẩm") 
         );
@@ -32,14 +32,15 @@ exports.findAll = async (req, res, next) => {
     let documents = [];
 
     try {
-        const bookService = new BookService(MongoDB.client);
+        const bookService = new BookService();
         const { q } = req.query;
         if (q) {
             documents = await bookService.findByQuery(q);
         } else {
-            documents = await bookService.find({});
+            documents = await bookService.findAll();
         }
     } catch (error) {
+        console.error("Error in findAll:", error);
         return next(
             new ApiError(500, "An error occurred while retrieving book")
         ); 
@@ -50,7 +51,7 @@ exports.findAll = async (req, res, next) => {
 // Find a sigle menu with an id
 exports.findOne = async (req, res, next) => {
     try {
-        const bookService = new BookService(MongoDB.client);
+        const bookService = new BookService();
         const document = await bookService.findById(req.params.id);
         if (!document) {
             return next(new ApiError(404, "menu not found"));
@@ -74,15 +75,17 @@ exports.update = async (req, res, next) => {
     }
 
     try {
-        const bookService = new BookService(MongoDB.client);
-
-        if(req.file != null) req.body.hinhanh = req.file.filename;
+        const bookService = new BookService();
+        if(req.file != null) {
+            req.body.hinhanh = req.file.filename;
+        }
         const document = await bookService.update(req.params.id, req.body);
         if (!document) {
             return next(new ApiError(404, "menu not found"));
         }
         return res.send({ message: "menu was updated successfully" });
     } catch (error) {
+        console.log(error);
         return next(
             new ApiError(500, `Error retrieving menu with id=${req.params.id}`)
         );
@@ -93,7 +96,7 @@ exports.update = async (req, res, next) => {
 // Delete a menu with the specified id in the request
 exports.delete = async (req, res, next) => {
     try {
-        const bookService = new BookService(MongoDB.client);
+        const bookService = new BookService();
         const document = await bookService.delete(req.params.id);
         if (!document) {
             return next(new ApiError(404, "menu not found"));
@@ -112,8 +115,8 @@ exports.delete = async (req, res, next) => {
 
 exports.findOneCategory = async (_req, res, next) => {
     try {
-        const bookService = new BookService(MongoDB.client);
-        const categoryService = new CategoryService(MongoDB.client);
+        const bookService = new BookService();
+        const categoryService = new CategoryService();
         const categoryName = await categoryService.findById(_req.params.id)
         const documents = await bookService.findByCategoryName(categoryName.name);
         return res.send(documents);
@@ -129,7 +132,7 @@ exports.findOneCategory = async (_req, res, next) => {
 
 exports.deleteAll = async (_req, res, next) => {
     try {
-        const bookService = new BookService(MongoDB.client);
+        const bookService = new BookService();
         const deletedCount = await bookService.deleteAll();
         return res.send({
             message: `${deletedCount} menus were delete successfully`,
@@ -146,7 +149,7 @@ exports.deleteAll = async (_req, res, next) => {
 // CATEGORY
 exports.createCategory = async (req, res, next) => {
     try {
-        const categoryService = new CategoryService(MongoDB.client);
+        const categoryService = new CategoryService();
         const document = await categoryService.create(req.body);
         return res.send(document);
     } catch (error) { 
@@ -160,7 +163,7 @@ exports.findAllCategory = async (req, res, next) => {
     let documents = [];
 
     try {
-        const categoryService = new CategoryService(MongoDB.client);
+        const categoryService = new CategoryService();
         const { name } = req.query;
         if (name) {
             documents = await categoryService.findByName(name);
@@ -178,7 +181,7 @@ exports.findAllCategory = async (req, res, next) => {
 // Find a sigle category with an id
 // exports.findOneCategory = async (req, res, next) => {
 //     try {
-//         const categoryService = new CategoryService(MongoDB.client);
+//         const categoryService = new CategoryService();
 //         const document = await categoryService.findById(req.params.id);
 //         if (!document) {
 //             return next(new ApiError(404, "category not found"));
@@ -202,8 +205,8 @@ exports.updateCategory = async (req, res, next) => {
     }
 
     try {
-        const categoryService = new CategoryService(MongoDB.client);
-        const bookService = new BookService(MongoDB.client);
+        const categoryService = new CategoryService();
+        const bookService = new BookService();
 
         const document = await categoryService.update(req.params.id, req.body);
         
@@ -224,8 +227,8 @@ exports.updateCategory = async (req, res, next) => {
 // Delete a category with the specified id in the request
 exports.deleteCategory = async (req, res, next) => {
     try {
-        const categoryService = new CategoryService(MongoDB.client);
-        const bookService = new BookService(MongoDB.client);
+        const categoryService = new CategoryService();
+        const bookService = new BookService();
 
         const category = await categoryService.findById(req.body.id)
         const products = await bookService.findByCategoryName(category.name);
@@ -253,7 +256,7 @@ exports.deleteCategory = async (req, res, next) => {
 
 exports.findAllFavoriteCategory = async (_req, res, next) => {
     try {
-        const categoryService = new CategoryService(MongoDB.client);
+        const categoryService = new CategoryService();
         const documents = await categoryService.findFavorite();
         return res.send(documents);
     } catch (error) {
@@ -268,7 +271,7 @@ exports.findAllFavoriteCategory = async (_req, res, next) => {
 
 exports.deleteAllCategory = async (_req, res, next) => {
     try {
-        const categoryService = new CategoryService(MongoDB.client);
+        const categoryService = new CategoryService();
         const deletedCount = await categoryService.deleteAll();
         return res.send({
             message: `${deletedCount} categorys were delete successfully`,

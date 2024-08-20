@@ -1,89 +1,103 @@
-const { ObjectId } = require("mongodb");
+const db = require('../utils/postgresql.util');
+
 class OrderService {
-    constructor(client) {
-        this.Order = client.db().collection("phieutheodoi");
+    constructor() {
+        this.db = db;
     }
-// Định nghĩa các phương thức truy xuất CSDL sử dụng mongodb API
+
     infoOrder(payload) {
         const order = {
-            docgia: payload.docgia,
-            sach: payload.sach,
+            docgia_id: payload.docgia.id,  // Assuming 'docgia' is an object with an '_id' field
+            // sach_id: payload.sach.id,      // Assuming 'sach' is an object with an '_id' field
             tongtien: payload.tongtien,
             ngaymuon: payload.ngaymuon,
             ngaytra: payload.ngaytra,
             trangthai: payload.trangthai,
         };
-        // Remove undefined fields
-        Object.keys(order).forEach(
-            (key) => {
-                order[key] === undefined && delete order[key]
-            }
-        );
+        Object.keys(order).forEach(key => order[key] === undefined && delete order[key]);
         return order;
     }
+
     async create(payload) {
+        console.log(payload)
         const order = this.infoOrder(payload);
-        const result = await this.Order.findOneAndUpdate(
-            order,
-            { $set: { 
-                trangthai: 'Đã đăng ký'
-                // ngaymuon: new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear() + ' ' + new Date().getHours() +':' + new Date().getMinutes() + ':' + new Date().getSeconds(),
-            }},
-            { returnDocument: "after", upsert: true }
+        const result = await this.db.oneOrNone(
+            `INSERT INTO phieutheodoi (docgia_id, tongtien, ngaymuon, ngaytra, trangthai)
+             VALUES ($[docgia_id], $[tongtien], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Đã đăng ký')
+             RETURNING id`,
+            order
         );
-    
+        const insertQuery = `
+            INSERT INTO chitietphieutheodoi (docgia, phieutheodoi_id, sach_id, soluong, gia, created_at)
+            VALUES ($1, $2, $3, $4, $5)
+        `;
+
+        // Iterate over the array and insert each item into the database
+        for (const item of payload.sach) {
+            await db.none(insertQuery, [item.docgia, result, item.sach_id, item.soluong, item.gia, item.created_at]);
+        }
         return result;
     }
 
     async update(id, payload) {
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
         const update = this.infoOrder(payload);
-        // update.ngaytra = new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear() + ' ' + new Date().getHours() +':' + new Date().getMinutes() + ':' + new Date().getSeconds();
-        const result = await this.Order.findOneAndUpdate(
-            filter,
-            { $set: update },
-            { returnDocument: "after" }
+        const result = await this.db.oneOrNone(
+            `UPDATE phieutheodoi
+             SET docgia_id = $[docgia_id], 
+                 tongtien = $[tongtien], 
+                 ngaymuon = $[ngaymuon], 
+                 ngaytra = $[ngaytra], 
+                 trangthai = $[trangthai]
+             WHERE id = $[id]
+             RETURNING *`,
+            { ...update, id }
         );
         return result;
     }
 
     async find(id) {
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
-        const result = await this.Order.find(filter);
-        return result.toArray();
+        const result = await this.db.any(
+            `SELECT * FROM phieutheodoi 
+             WHERE id = $1`,
+            [id]
+        );
+        return result;
     }
 
     async findAll() {
-        const result = await this.Order.find();
-        return result.toArray();
+        const result = await this.db.any(`SELECT * FROM phieutheodoi`);
+        return result;
     }
 
     async findAllOrderUser(id) {
-        const filter = {
-            "docgia._id": id,
-        };
-        const result = await this.Order.find(filter);
-        return result.toArray();
+        const result = await this.db.any(
+            `SELECT * FROM phieutheodoi 
+             WHERE docgia_id = $1`,
+            [id]
+        );
+        return result;
+    }
+    async findAllOrderDetailUser() {
+        const result = await this.db.any(
+            `SELECT * FROM chitietphieutheodoi `,
+        );
+        return result;
     }
 
     async delete(id) {
-        const result = await this.Order.findOneAndDelete({
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        });
+        const result = await this.db.oneOrNone(
+            `DELETE FROM phieutheodoi 
+             WHERE id = $1
+             RETURNING *`,
+            [id]
+        );
         return result;
     }
 
     async deleteAll() {
-        const result = await this.Order.deleteMany({});
-        return result.deletedCount;
+        const result = await this.db.result(`DELETE FROM phieutheodoi`);
+        return result.rowCount;
     }
-
 }
-
-
 
 module.exports = OrderService;

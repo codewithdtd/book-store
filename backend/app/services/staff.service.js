@@ -1,9 +1,10 @@
-const { ObjectId } = require("mongodb");
+const db = require('../utils/postgresql.util');
+
 class StaffService {
-    constructor(client) {
-        this.User = client.db().collection("nhanvien");
+    constructor() {
+        this.db = db;
     }
-// Định nghĩa các phương thức truy xuất CSDL sử dụng mongodb API
+
     infoUser(payload) {
         const user = {
             hoten: payload.hoten,
@@ -13,137 +14,96 @@ class StaffService {
             password: payload.password,
             ngaytao: payload.ngaytao,
             ngaychinhsua: payload.ngaychinhsua,
-            deleted: 0,
+            deleted: false,
+            role: 'admin'  // Default role for staff
         };
         // Remove undefined fields
         Object.keys(user).forEach(
             (key) => {
-                user['role'] = 'admin',
-                user[key] === undefined && delete user[key]
+                user[key] === undefined && delete user[key];
             }
         );
         return user;
     }
+
     async create(payload) {
         const user = this.infoUser(payload);
-        const result = await this.User.findOneAndUpdate(
-            user,
-            { $set: {ngaytao: new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear()}},
-            { returnDocument: "after", upsert: true }
+        const result = await this.db.oneOrNone(
+            `INSERT INTO nhanvien (hoten, chucvu, diachi, sodienthoai, password, ngaytao, ngaychinhsua, deleted, role)
+             VALUES ($[hoten], $[chucvu], $[diachi], $[sodienthoai], $[password], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, $[deleted], $[role])
+             RETURNING *`,
+            user
         );
         return result;
     }
 
     async find(filter) {
-        const cursor = await this.User.find(filter);
-        return await cursor.toArray();
+        const conditions = Object.keys(filter).map(key => `${key} = $[${key}]`).join(' AND ');
+        const result = await this.db.any(
+            `SELECT * FROM nhanvien WHERE ${conditions}`,
+            filter
+        );
+        return result;
     }
 
     async findByQuery(query) {
-        const filter = {};
-        for (const key in query) {
-            if (Object.hasOwnProperty.call(query, key)) {
-                filter[key] = { $regex: new RegExp(query[key], 'i') };
-            }
-        }
-        return await this.find(filter);
+        const conditions = Object.keys(query).map(
+            key => `${key} ILIKE '%' || $[${key}] || '%'`
+        ).join(' AND ');
+        const result = await this.db.any(
+            `SELECT * FROM nhanvien WHERE ${conditions}`,
+            query
+        );
+        return result;
     }
 
     async findById(id) {
-        return await this.User.findOne({
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        });
+        const result = await this.db.oneOrNone(
+            `SELECT * FROM nhanvien WHERE id = $1`,
+            [id]
+        );
+        return result;
     }
 
     async findUserLogin(filter) {
-        const cursor = await this.User.findOne(filter);
-        return await cursor;
+        const result = await this.db.oneOrNone(
+            `SELECT * FROM nhanvien WHERE ${Object.keys(filter).map(key => `${key} = $[${key}]`).join(' AND ')}`,
+            filter
+        );
+        return result;
     }
 
     async update(id, payload) {
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
-        console.log(filter)
         const update = this.infoUser(payload);
-        const result = await this.User.findOneAndUpdate(
-            filter,
-            { $set: update },
-            { returnDocument: "after" }
+        const setClause = Object.keys(update).map(key => `${key} = $[${key}]`).join(', ');
+        const result = await this.db.oneOrNone(
+            `UPDATE nhanvien
+             SET ${setClause}
+             WHERE id = $[id]
+             RETURNING *`,
+            { ...update, id }
         );
         return result;
     }
 
     async delete(id) {
-        const result = await this.User.findOneAndUpdate({
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        },
-        { $set: {'deleted': 1} },
-        { returnDocument: "after" });
+        const result = await this.db.oneOrNone(
+            `UPDATE nhanvien
+             SET deleted = true
+             WHERE id = $1
+             RETURNING *`,
+            [id]
+        );
         return result;
     }
 
     async deleteAll() {
-        const result = await this.User.deleteMany({});
-        return result.deletedCount;
-    }
-
-    async addCart(id, cartItems) {
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
-        const update = { $push: {cart: {$each: cartItems}}};
-        const result = await this.User.findOneAndUpdate(
-            filter,
-            update,
-            { returnDocument: "after"}
+        const result = await this.db.result(
+            `DELETE FROM nhanvien`
         );
-        return result;
+        return result.rowCount;
     }
 
-    async updateCart(id, cartItems) {
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
-        const update = { $push: {cart: {$each: cartItems}}} ;
-        const result = await this.User.findOneAndUpdate(
-            filter,
-            update,
-            { returnDocument: "after"}
-        );
-        return result;
-    }
-
-    async deleteCart(id, cartItems) {
-        const idCart = new ObjectId(cartItems);
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
-        console.log(idCart)
-
-        const update = { $pull: {cart: {_id: idCart}}};
-        console.log(update)
-        const result = await this.User.findOneAndUpdate(
-            filter,
-            update,
-            { returnDocument: "after"}
-        );
-        return result;
-    }
-
-    async deleteAllCart(id) {
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
-        const result = await this.User.findOneAndUpdate(
-            filter,
-            {$set: {cart: []}},
-            { returnDocument: "after"}
-        );
-        return result;
-    }
 }
-
-
 
 module.exports = StaffService;

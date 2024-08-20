@@ -1,9 +1,11 @@
-const { ObjectId } = require("mongodb");
-class UserService {
-    constructor(client) {
-        this.User = client.db().collection("users");
+const db = require('../utils/postgresql.util');
+
+class docgiaervice {
+    constructor() {
+        this.db = db;
     }
-// Định nghĩa các phương thức truy xuất CSDL sử dụng mongodb API
+
+    // Prepares the user object, removing undefined fields
     infoUser(payload) {
         const user = {
             ho: payload.ho,
@@ -13,140 +15,101 @@ class UserService {
             ngaysinh: payload.ngaysinh,
             sodienthoai: payload.sodienthoai,
             password: payload.password,
-            cart: payload.cart,
-            ngaytao: payload.ngaytao,
-            ngaychinhsua: payload.ngaychinhsua,
-            deleted: 0,
+            ngaytao: new Date(),
+            ngaychinhsua: new Date(),
+            deleted: false,
+            role: 'user', // Default role
         };
-        // Remove undefined fields
-        Object.keys(user).forEach(
-            (key) => {
-                user['role'] = 'user';
-                user[key] === undefined && delete user[key]
-            }
-        );
+        Object.keys(user).forEach(key => user[key] === undefined && delete user[key]);
         return user;
     }
+
+    // Inserts a new user or updates if the user already exists
     async create(payload) {
         const user = this.infoUser(payload);
-        const result = await this.User.findOneAndUpdate(
-            user,
-            { $set: {ngaytao: new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear()}},
-            { returnDocument: "after", upsert: true }
+        const result = await this.db.oneOrNone(
+            `INSERT INTO docgia (ho, ten, diachi, gioitinh, ngaysinh, sodienthoai, password, ngaytao, ngaychinhsua, deleted, role)
+            VALUES ($[ho], $[ten], $[diachi], $[gioitinh], $[ngaysinh], $[sodienthoai], $[password], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, $[deleted], $[role])
+            RETURNING *`,
+            user
         );
         return result;
     }
 
+    // Finds docgia based on given filters
     async find(filter) {
-        const cursor = await this.User.find(filter);
-        return await cursor.toArray();
+        const conditions = Object.keys(filter).map(key => `${key} = $[${key}]`).join(' AND ');
+        const result = await this.db.any(
+            `SELECT * FROM docgia`,
+        );
+        return result;
     }
 
+    // Finds docgia matching a query with case-insensitive search
     async findByQuery(query) {
-        const filter = {};
-        for (const key in query) {
-            if (Object.hasOwnProperty.call(query, key)) {
-                filter[key] = { $regex: new RegExp(query[key], 'i') };
-            }
-        }
-        return await this.find(filter);
+        const conditions = Object.keys(query).map(
+            key => `${key} ILIKE '%$[${key}]%'`
+        ).join(' AND ');
+        const result = await this.db.any(
+            `SELECT * FROM docgia WHERE ${conditions}`,
+            query
+        );
+        return result;
     }
 
+    // Finds a user by ID
     async findById(id) {
-        return await this.User.findOne({
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        });
+        const result = await this.db.oneOrNone(
+            `SELECT * FROM docgia WHERE id = $1`,
+            [id]
+        );
+        return result;
     }
 
+    // Finds a user by login credentials
     async findUserLogin(filter) {
-        const cursor = await this.User.findOne(filter);
-        return await cursor;
+        const result = await this.db.oneOrNone(
+            `SELECT * FROM docgia WHERE ${Object.keys(filter).map(key => `${key} = $[${key}]`).join(' AND ')}`,
+            filter
+        );
+        return result;
     }
 
+    // Updates a user's details by ID
     async update(id, payload) {
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
-        console.log(filter)
         const update = this.infoUser(payload);
-        const result = await this.User.findOneAndUpdate(
-            filter,
-            { $set: update },
-            { returnDocument: "after" }
+        const result = await this.db.oneOrNone(
+            `UPDATE docgia
+             SET ho = $[ho], ten = $[ten], diachi = $[diachi], gioitinh = $[gioitinh], ngaysinh = $[ngaysinh], sodienthoai = $[sodienthoai], password = $[password], ngaytao = $[ngaytao], ngaychinhsua = $[ngaychinhsua], deleted = $[deleted], role = $[role]
+             WHERE id = $[id]
+             RETURNING *`,
+            { ...update, id }
         );
         return result;
     }
 
+    // Marks a user as deleted
     async delete(id) {
-        const result = await this.User.findOneAndUpdate({
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        },
-        { $set: {'deleted': 1} },
-        { returnDocument: "after" });
+        const result = await this.db.oneOrNone(
+            `UPDATE docgia
+             SET deleted = true
+             WHERE id = $1
+             RETURNING *`,
+            [id]
+        );
         return result;
     }
 
+    // Deletes all docgia
     async deleteAll() {
-        const result = await this.User.deleteMany({});
-        return result.deletedCount;
-    }
-
-    async addCart(id, cartItems) {
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
-        const update = { $push: {cart: {$each: cartItems}}};
-        const result = await this.User.findOneAndUpdate(
-            filter,
-            update,
-            { returnDocument: "after"}
+        const result = await this.db.result(
+            `DELETE FROM docgia`
         );
-        return result;
+        return result.rowCount;
     }
 
-    async updateCart(id, cartItems) {
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
-        const update = { $push: {cart: {$each: cartItems}}} ;
-        const result = await this.User.findOneAndUpdate(
-            filter,
-            update,
-            { returnDocument: "after"}
-        );
-        return result;
-    }
-
-    async deleteCart(id, cartItems) {
-        const idCart = new ObjectId(cartItems);
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
-        console.log(idCart)
-
-        const update = { $pull: {cart: {_id: idCart}}};
-        console.log(update)
-        const result = await this.User.findOneAndUpdate(
-            filter,
-            update,
-            { returnDocument: "after"}
-        );
-        return result;
-    }
-
-    async deleteAllCart(id) {
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
-        const result = await this.User.findOneAndUpdate(
-            filter,
-            {$set: {cart: []}},
-            { returnDocument: "after"}
-        );
-        return result;
-    }
+    // Adds items to a user's cart
+   
 }
 
-
-
-module.exports = UserService;
+module.exports = docgiaervice;

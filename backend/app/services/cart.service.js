@@ -1,35 +1,30 @@
-const { ObjectId } = require("mongodb");
+const pgp = require('pg-promise')();
+const db = require('../utils/postgresql.util');
 class CartService {
-    constructor(client) {
-        this.Cart = client.db().collection("giohang");
+    constructor() {
+        this.db = db;
     }
-// Định nghĩa các phương thức truy xuất CSDL sử dụng mongodb API
+
     infocart(payload) {
+        console.log(payload)
         const cart = {
             docgia: payload.docgia,
-            sach: payload.sach,
-            soluong: payload.soluong,
-            gia: payload.soluong*payload.sach.dongia        
+            sach_id: payload.sach.id,
+            soluong: parseInt(payload.soluong),
+            gia: parseInt(payload.soluong * payload.sach.dongia)        
         };
-        // Remove undefined fields
-        Object.keys(cart).forEach(
-            (key) => {
-                cart[key] === undefined && delete cart[key]
-            }
-        );
+        Object.keys(cart).forEach(key => cart[key] === undefined && delete cart[key]);
         return cart;
     }
+
     async create(user, payload) {
         const cart = this.infocart(payload);
-        if(cart.soluong > 0) {
-            const result = await this.Cart.findOneAndUpdate(
-                cart,
-                { $set: {
-                    docgia: user,
-                    gia: payload.soluong*payload.sach.dongia
-                    }
-                },
-                { returnDocument: "after", upsert: true }
+        if (cart.soluong > 0) {
+            const result = await this.db.oneOrNone(
+                `INSERT INTO carts (docgia, sach_id, soluong, gia) 
+                 VALUES ($[docgia], $[sach_id], $[soluong], $[gia])
+                 RETURNING *`,
+                { ...cart, docgia: user }
             );
             return result;
         }
@@ -37,16 +32,15 @@ class CartService {
     }
 
     async update(id, payload) {
-        console.log(payload)
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
         const update = this.infocart(payload);
-        if(update.soluong >= 0)  { 
-            const result = await this.Cart.findOneAndUpdate(
-                filter,
-                { $set: update },
-                { returnDocument: "after" }
+        if (update.soluong >= 0) {
+            const result = await this.db.oneOrNone(
+                `UPDATE carts
+                 SET soluong = $[soluong], 
+                     gia = $[gia] 
+                 WHERE id = $[id]
+                 RETURNING *`,
+                { ...update, id }
             );
             return result;
         }
@@ -54,59 +48,70 @@ class CartService {
     }
 
     async updatesoluong(cart) {
-        console.log(cart)
-        const filter = {
-            _id: ObjectId.isValid(cart._id) ? new ObjectId(cart._id) : null,
-        };
-        const result = await this.Cart.findOneAndUpdate(
-            filter,
-            { $set: {"soluong": cart.soluong, "gia": cart.gia } },
-            { returnDocument: "after" }
+        const result = await this.db.oneOrNone(
+            `UPDATE carts
+             SET soluong = $[soluong], 
+                 gia = $[gia]
+             WHERE id = $[id]
+             RETURNING *`,
+            { soluong: cart.soluong, gia: cart.gia, id: cart.id }
         );
         return result;
     }
+
     async find(user, id) {
-        const result = await this.Cart.findOne({ 'sach._id': { $eq: id }, docgia: user });
+        const result = await this.db.oneOrNone(
+            `SELECT * FROM carts 
+             WHERE sach_id = $1 
+             AND docgia = $2`,
+            [id, user]
+        );
         return result;
     }
 
     async findById(id) {
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
-        const result = await this.Cart.findOne(filter);
+        const result = await this.db.oneOrNone(
+            `SELECT * FROM carts 
+             WHERE id = $1`,
+            [id]
+        );
         return result ?? false;
     }
 
     async findAllCartUser(id) {
-        const filter = {
-            docgia: id,
-        };
-        const result = await this.Cart.find(filter);
-        return result.toArray();
+        const result = await this.db.any(
+            `SELECT * FROM carts 
+             WHERE docgia = $1`,
+            [id]
+        );
+        return result;
     }
 
     async delete(id) {
-        const result = await this.Cart.findOneAndDelete({
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        });
+        const result = await this.db.oneOrNone(
+            `DELETE FROM carts 
+             WHERE id = $1
+             RETURNING *`,
+            [id]
+        );
         return result;
     }
 
     async deleteAll() {
-        const result = await this.Cart.deleteMany({});
-        return result.deletedCount;
+        const result = await this.db.result(`DELETE FROM carts`);
+        return result.rowCount;
     }
 
     async deleteAllCartUser(id) {
-        const filter = {
-            docgia: id,
-        };
-        const result = await this.Cart.deleteMany(filter);
-        return result;
+        const result = await this.db.result(
+            `DELETE FROM carts 
+             WHERE docgia = $1`,
+            [id]
+        );
+        return result.rowCount;
     }
-
 }
+
 
 
 

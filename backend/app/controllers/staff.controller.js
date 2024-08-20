@@ -1,6 +1,6 @@
 const StaffService = require("../services/staff.service");
 const CartService = require("../services/cart.service")
-const MongoDB = require("../utils/mongodb.util");
+const PostgreSQL = require("../utils/postgresql.util");
 const ApiError = require("../api-error");
 const jwt = require('jsonwebtoken');
 
@@ -14,7 +14,7 @@ require('dotenv').config()
 
 exports.create = async (req, res, next) => {
     try {
-        const staffService = new StaffService(MongoDB.client);
+        const staffService = new StaffService();
         const document = await staffService.create(req.body);
         return res.send(document);
     } catch (error) { 
@@ -28,7 +28,7 @@ exports.findAll = async (req, res, next) => {
     let documents = [];
 
     try {
-        const staffService = new StaffService(MongoDB.client);
+        const staffService = new StaffService();
         const queryParams = req.query;
         if (Object.keys(queryParams).length > 0) {
             documents = await staffService.findByQuery(queryParams);
@@ -45,7 +45,7 @@ exports.findAll = async (req, res, next) => {
 
 exports.findOne = async (req, res, next) => {
     try {
-        const staffService = new StaffService(MongoDB.client);
+        const staffService = new StaffService();
         const document = await staffService.findById(req.params.id);
         if (!document) {
             return next(new ApiError(404, "user not found"));
@@ -67,7 +67,7 @@ exports.update = async (req, res, next) => {
     }
 
     try {
-        const staffService = new StaffService(MongoDB.client);
+        const staffService = new StaffService();
         const document = await staffService.update(req.params.id, req.body);
         if (!document) {
             return next(new ApiError(404, "user not found"));
@@ -83,7 +83,7 @@ exports.update = async (req, res, next) => {
 
 exports.delete = async (req, res, next) => {
     try {
-        const staffService = new StaffService(MongoDB.client);
+        const staffService = new StaffService();
         const document = await staffService.delete(req.params.id);
         if (!document) {
             return next(new ApiError(404, "user not found"));
@@ -102,7 +102,7 @@ exports.delete = async (req, res, next) => {
 
 exports.deleteAll = async (_req, res, next) => {
     try {
-        const staffService = new StaffService(MongoDB.client);
+        const staffService = new StaffService();
         const deletedCount = await staffService.deleteAll();
         return res.send({
             message: `${deletedCount} users were delete successfully`,
@@ -118,7 +118,7 @@ exports.deleteAll = async (_req, res, next) => {
 
 exports.login = async (req, res, next) => {
     try {
-        const staffService = new StaffService(MongoDB.client);
+        const staffService = new StaffService();
         const data = req.body;
         const user = await staffService.findUserLogin({ sodienthoai: data.sodienthoai, password: data.password });
         if(!user) {
@@ -194,12 +194,12 @@ exports.refreshToken = async (req, res, next) => {
 // CART
 exports.addCart = async (req,res,next) => {
     try {
-        const staffService = new StaffService(MongoDB.client);
-        const cartService = new CartService(MongoDB.client);
-        const bookService = new BookService(MongoDB.client);
+        const staffService = new StaffService();
+        const cartService = new CartService();
+        const bookService = new BookService();
 
         const data = req.body;
-        const id = req.user.user._id;
+        const id = req.user.user.id;
 
         const cartItems = [];
         const cartItem = {
@@ -208,18 +208,17 @@ exports.addCart = async (req,res,next) => {
             dongia: data.dongia,
         };
         // Kiểm tra số lượng trong kho
-        const countProduct = await bookService.findById(data._id)
+        const countProduct = await bookService.findById(data.id)
 
-        const findCart = await cartService.find(id, data._id)
+        const findCart = await cartService.find(id, data.id)
         console.log(cartItem);
         
         if(countProduct.soluong >= cartItem.soluong && !findCart ){
             countProduct.soluong = countProduct.soluong - cartItem.soluong;
 
             cartItems.push(cartItem)
-            const addCart = await staffService.addCart(id, cartItems);
 
-            const updateBook = await bookService.update(cartItem.sach._id,countProduct)
+            const updateBook = await bookService.update(cartItem.sach.id,countProduct)
 
             const addtoCart = await cartService.create(id, cartItem);
             return res.send({addtocart: addtoCart});
@@ -231,14 +230,12 @@ exports.addCart = async (req,res,next) => {
             findCart.dongia = total;
             // cartItems.push(cartItem)
 
-            const updateBook = await bookService.update(cartItem.sach._id,countProduct)
+            const updateBook = await bookService.update(cartItem.sach.id,countProduct)
             const addtoCart = await cartService.updatesoluong(findCart);
         
             const carts = await cartService.findAllCartUser(id)
 
-            const newCarts = carts.map(({ user, ...rest}) => rest);
-            const clearCart = await staffService.deleteAllCart(id)
-            const updateCartUser = await staffService.updateCart(id,newCarts) 
+      
 
             return res.send(addtoCart);
         }
@@ -254,8 +251,8 @@ exports.addCart = async (req,res,next) => {
 
 exports.findAllCartUser = async (req, res, next) => {
     try {
-        const cartService = new CartService(MongoDB.client);
-        const carts = await cartService.findAllCartUser(req.user.user._id)
+        const cartService = new CartService();
+        const carts = await cartService.findAllCartUser(req.user.user.id)
         return res.json(carts)
     } catch (error) {
         return next( new ApiError(
@@ -267,16 +264,16 @@ exports.findAllCartUser = async (req, res, next) => {
 exports.updateCart = async (req, res, next) => {
     try {
         const cart = req.body;
-        const user = req.user.user._id;
+        const user = req.user.user.id;
 
-        const cartService = new CartService(MongoDB.client);
-        const staffService = new StaffService(MongoDB.client);
-        const bookService = new BookService(MongoDB.client)
+        const cartService = new CartService();
+        const staffService = new StaffService();
+        const bookService = new BookService()
    
         //Check số lượng sản phẩm trong kho
-        const countProduct = await bookService.findById(cart.sach._id)
+        const countProduct = await bookService.findById(cart.sach.id)
 
-        const item = await cartService.findById(cart._id);
+        const item = await cartService.findById(cart.id);
         
         if(countProduct.soluong >= (cart.soluong - item.soluong)){
             if(cart.soluong > item.soluong)
@@ -286,16 +283,14 @@ exports.updateCart = async (req, res, next) => {
             console.log(countProduct.soluong)
 
 
-            const updateCart = await cartService.update(cart._id,cart)
+            const updateCart = await cartService.update(cart.id,cart)
             const carts = await cartService.findAllCartUser(user)
 
-            const updateBook = await bookService.update(cart.sach._id,countProduct)
+            const updateBook = await bookService.update(cart.sach.id,countProduct)
             // console.log(updateBook)
 
 
-            const newCarts = carts.map(({ user, ...rest}) => rest);
-            const clearCart = await staffService.deleteAllCart(user)
-            const updateCartUser = await staffService.updateCart(user,newCarts) 
+        
 
             return res.json(updateCartUser)
         }
@@ -311,25 +306,25 @@ exports.updateCart = async (req, res, next) => {
 
 exports.deleteCart = async (req, res, next) => {
     try {
-        const cart_id = req.params.id;
-        const user = req.user.user._id;
+        const cartid = req.params.id;
+        const user = req.user.user.id;
 
 
-        const cartService = new CartService(MongoDB.client);
-        const staffService = new StaffService(MongoDB.client);
-        const bookService = new BookService(MongoDB.client)
+        const cartService = new CartService();
+        const staffService = new StaffService();
+        const bookService = new BookService()
 
-        const cart = await cartService.findById(cart_id)
-        const product = await bookService.findById(cart.sach._id)
+        const cart = await cartService.findById(cartid)
+        const product = await bookService.findById(cart.sach.id)
 
  
         cart.soluong = cart.soluong + product.soluong;
 
-        const countProduct = await bookService.update(cart.sach._id, {soluong: cart.soluong} )
+        const countProduct = await bookService.update(cart.sach.id, {soluong: cart.soluong} )
 
 
-        const deleteCart = await cartService.delete(cart._id);
-        const deleteCartUser = await staffService.deleteCart(user, cart._id)
+        const deleteCart = await cartService.delete(cart.id);
+     
 
         return res.json(deleteCartUser);
     } catch (error) {
@@ -342,12 +337,12 @@ exports.deleteCart = async (req, res, next) => {
 exports.addOrder = async (req, res, next) => {
     try {
         const order = req.body;
-        const user = req.user.user._id;
+        const user = req.user.user.id;
 
         order.userId = user;
 
-        const cartService = new CartService(MongoDB.client);
-        const orderService = new OrderService(MongoDB.client);
+        const cartService = new CartService();
+        const orderService = new OrderService();
 
         // Create order
         const addOrder = await orderService.create(order);
@@ -364,9 +359,9 @@ exports.addOrder = async (req, res, next) => {
 exports.updateOrder = async (req, res, next) => {
     try {
         const order = req.body;
-        const orderService = new OrderService(MongoDB.client);
+        const orderService = new OrderService();
         
-        const updateOrder = await orderService.update(order._id,order)
+        const updateOrder = await orderService.update(order.id,order)
         return res.json(updateOrder)
     } catch (error) {
         console.log(error)
@@ -378,8 +373,8 @@ exports.updateOrder = async (req, res, next) => {
 
 exports.findAllOrderUser = async (req, res, next) => {
     try {
-        const userId = req.user.user._id;
-        const orderService = new OrderService(MongoDB.client);
+        const userId = req.user.user.id;
+        const orderService = new OrderService();
 
         const AllOrder = await orderService.findAllOrderUser(userId)
         return res.json(AllOrder)
@@ -394,9 +389,20 @@ exports.findAllOrderUser = async (req, res, next) => {
 exports.findAllOrder = async (req, res, next) => {
     let AllOrder = [];
     try {
-        const orderService = new OrderService(MongoDB.client);
+        const orderService = new OrderService();
 
         AllOrder = await orderService.findAll();
+        // const AllOrder = await orderService.findAllOrderUser(userId)
+        const AllOrderDetail = await orderService.findAllOrderDetailUser();
+        console.log(AllOrderDetail)
+        AllOrder.forEach(item => {
+            item.sach = [];
+            AllOrderDetail.forEach(detail => {
+                if (item.id == detail.phieutheodoi_id) 
+                    item.sach.push(detail);
+            })
+        })
+        return res.json(AllOrder)
     } catch (error) {
         console.log(error)
         return next( new ApiError(
@@ -408,7 +414,7 @@ exports.findAllOrder = async (req, res, next) => {
 
 exports.findAllPublisher = async (req, res, next) => {
     try {
-        const publisherService = new PublisherService(MongoDB.client);
+        const publisherService = new PublisherService();
 
         const AllPublisher = await publisherService.find()
         return res.json(AllPublisher)
@@ -422,7 +428,7 @@ exports.findAllPublisher = async (req, res, next) => {
 
 exports.addPublisher = async (req, res, next) => {
     try {
-        const publisherService = new PublisherService(MongoDB.client);
+        const publisherService = new PublisherService();
         const newPublisher = await publisherService.create(req.body);
         
         return res.send(newPublisher);
@@ -441,22 +447,22 @@ exports.updatePublisher = async (req, res, next) => {
     }
 
     try {
-        const publisherService = new PublisherService(MongoDB.client);
-        const document = await publisherService.update(req.body._id, req.body);
+        const publisherService = new PublisherService();
+        const document = await publisherService.update(req.body.id, req.body);
         if (!document) {
             return next(new ApiError(404, "Not found"));
         }
         return res.send(document);
     } catch (error) {
         return next(
-            new ApiError(500, `Error with id=${req.body._id}`)
+            new ApiError(500, `Error with id=${req.body.id}`)
         );
     }
 }
 
 exports.deletePublisher = async (req, res, next) => {
     try {
-        const publisherService = new PublisherService(MongoDB.client);
+        const publisherService = new PublisherService();
         const document = await publisherService.delete(req.params.id);
         if (!document) {
             return next(new ApiError(404, "Not found"));
@@ -469,5 +475,29 @@ exports.deletePublisher = async (req, res, next) => {
                 `Không thể xóa id=${req.params.id}`
             )
         );
+    }
+}
+
+exports.findAllOrderDetailUser = async (req, res, next) => {
+    try {
+        const userId = req.user.user.id;
+        const orderService = new OrderService();
+
+        const AllOrder = await orderService.findAllOrderUser(userId)
+        const AllOrderDetail = await orderService.findAllOrderDetailUser();
+        console.log(AllOrderDetail)
+        AllOrder.forEach(item => {
+            item.sach = [];
+            AllOrderDetail.forEach(detail => {
+                if (item.id == detail.phieutheodoi_id) 
+                    item.sach.push(detail);
+            })
+        })
+        return res.json(AllOrder)
+    } catch (error) {
+        console.log(error)
+        return next( new ApiError(
+            500, "Đã có lỗi xảy ra!"
+        ))
     }
 }

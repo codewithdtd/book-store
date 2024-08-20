@@ -1,84 +1,86 @@
-const { ObjectId } = require("mongodb");
+const db = require('../utils/postgresql.util');
+
 class PublisherService {
-    constructor(client) {
-        this.Publisher = client.db().collection("nhaXuatBan");
+    constructor() {
+        this.db = db;
     }
-// Định nghĩa các phương thức truy xuất CSDL sử dụng mongodb API
+
     infoPublisher(payload) {
         const publisher = {
             ten: payload.ten,
-            diachi: payload.diachi, 
+            diachi: payload.diachi,
+            delete: false,
         };
-        // Remove undefined fields
-        Object.keys(publisher).forEach(
-            (key) => {
-                publisher[key] === undefined && delete publisher[key]
-            }
-        );
+        Object.keys(publisher).forEach(key => publisher[key] === undefined && delete publisher[key]);
         return publisher;
     }
+
     async create(payload) {
         const publisher = this.infoPublisher(payload);
-        const result = await this.Publisher.findOneAndUpdate(
-            publisher,
-            { $set: {}},
-            { returnDocument: "after", upsert: true }
+        const result = await this.db.oneOrNone(
+            `INSERT INTO nhaXuatBan (ten, diachi)
+             VALUES ($[ten], $[diachi])
+             RETURNING *`,
+            publisher
         );
         return result;
     }
 
-    async find(filter) {
-        const cursor = await this.Publisher.find(filter);
-        return await cursor.toArray();
+    async find() {
+        const result = await this.db.any(
+            `SELECT * FROM nhaXuatBan`,
+        );
+        return result;
     }
 
     async findByQuery(query) {
-        const filter = {};
-        for (const key in query) {
-            if (Object.hasOwnProperty.call(query, key)) {
-                filter[key] = { $regex: new RegExp(query[key], 'i') };
-            }
-        }
-        return await this.find(filter);
+        const conditions = Object.keys(query).map(
+            key => `${key} ILIKE '%$[${key}]%'`
+        ).join(' AND ');
+        const result = await this.db.any(
+            `SELECT * FROM nhaXuatBan WHERE ${conditions}`,
+            query
+        );
+        return result;
     }
 
     async findById(id) {
-        return await this.Publisher.findOne({
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        });
+        const result = await this.db.oneOrNone(
+            `SELECT * FROM nhaXuatBan WHERE id = $1`,
+            [id]
+        );
+        return result;
     }
 
     async update(id, payload) {
-        const filter = {
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
         const update = this.infoPublisher(payload);
-        const result = await this.Publisher.findOneAndUpdate(
-            filter,
-            { $set: update },
-            { returnDocument: "before" }
+        const result = await this.db.oneOrNone(
+            `UPDATE nhaXuatBan
+             SET ten = $[ten], diachi = $[diachi]
+             WHERE id = $[id]
+             RETURNING *`,
+            { ...update, id }
         );
         return result;
     }
 
     async delete(id) {
-        const result = await this.Publisher.findOneAndUpdate(
-            {
-                _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-            }, 
-            {$set: {"deleted": 1}},
-            { returnDocument: "after" }
+        const result = await this.db.oneOrNone(
+            `UPDATE nhaXuatBan
+             SET deleted = true
+             WHERE id = $1
+             RETURNING *`,
+            [id]
         );
-       
         return result;
     }
 
     async deleteAll() {
-        const result = await this.Publisher.deleteMany({});
-        return result.deletedCount;
+        const result = await this.db.result(
+            `DELETE FROM nhaXuatBan`
+        );
+        return result.rowCount;
     }
 }
-
-
 
 module.exports = PublisherService;
