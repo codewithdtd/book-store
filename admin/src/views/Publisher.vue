@@ -41,7 +41,7 @@ export default {
         handleEditPublisher(publisher) {
             this.ten = publisher.ten;
             this.diachi = publisher.diachi;
-            this.id = publisher._id;
+            this.id = publisher.id;
             this.publisher_form = !this.publisher_form;
         },
         async handleSubmit() {

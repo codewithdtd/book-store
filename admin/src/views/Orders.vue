@@ -9,7 +9,7 @@
                 <h3>Chỉnh sửa phiếu theo dõi</h3>
                 <div class="order__form__item">
                     <p>Mã phiếu:</p>
-                    <span>{{ order._id }}</span>
+                    <span>{{ order.id }}</span>
                 </div>
                 <div class="order__form__item">
                     <p>Đọc giả:</p>
@@ -22,8 +22,8 @@
                 <div class="order__form__item">
                     <p>Sách:</p>
                 </div>
-                <div class="order__form__item order__form__item__book" v-for="(item,index) in book">
-                    <span>{{ index+1+'. ' + item.sach.ten + ' x' + item.soluong + ' quyển ' + item.gia + 'VNĐ' }}</span>
+                <div class="order__form__item order__form__item__book" v-for="(item,index) in order.sach">
+                    <span>{{ index+1+'. ' + `ID: ${item.id}` + ' x' + item.soluong + ' quyển ' + item.gia + 'VNĐ' }}</span>
                 </div>
                 <div class="order__form__item">
                     <p>Tổng tiền:</p>
@@ -109,7 +109,7 @@ export default {
                 this.phuthu = this.tongtien * 20 / 100;
             !this.phuthu ? this.tongtien = this.tongtien : this.tongtien = this.tongtien + this.tongtien * 20 / 100
             const data = {
-                _id: this.order._id,
+                id: this.order.id,
                 ngaymuon: this.ngaymuon,
                 ngaytra: this.ngaytra,
                 docgia: this.docgia,

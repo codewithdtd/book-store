@@ -75,10 +75,11 @@ export default {
             this.product_form = !this.product_form;
         },
         handleEditProduct(product) {
+            product._id = product.id;
             this.product = product;
             // const {ten, hinhanh, mota, dongia, soluong, _id} = product;
             this.ten = product.ten;
-            this._id = product._id;
+            this._id = product.id;
             this.mota = product.mota;
             this.tacgia = product.tacgia;
             this.namxuatban = product.namxuatban;

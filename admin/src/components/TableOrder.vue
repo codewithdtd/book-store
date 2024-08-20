@@ -3,7 +3,7 @@
         <i class="ri-search-line"></i>
         <input type="text" placeholder="Tìm kiếm" v-model="search" @keyup="getAllProduct">
     </div>
-    <div class="tables">
+    <div class="tables" v-if="list.docgia">
         <div class="table__name">{{ nameTable }}</div>
         <div class="table__title row" >
             <div class="table__title__item col-sm-1">STT</div>
@@ -22,7 +22,7 @@
         </div>
         <div v-for="(item, index) in list" class="table__list row" :key="item.id">
             <div class="table__list__item col-sm-1">{{ index + 1 }}</div>
-            <div class="table__list__item col-sm-3">{{ item._id }}</div>
+            <div class="table__list__item col-sm-3">{{ item.id }}</div>
             <div class="table__list__item col-sm-2">
                 {{ item.docgia.ho+' '+item.docgia.ten }}
             </div>
@@ -46,15 +46,18 @@
 </template>
 <script>
 import StaffService from '@/services/staff.service.js'
+import bookService from '@/services/product.service'
+import { start } from '@popperjs/core';
+
 export default {
     props: [
         "nameTable"
     ],
-    watch: {
-        list(newValue) {
-            this.getAllOrder();
-        }
-    },
+    // watch: {
+    //     list(newValue) {
+    //         this.getAllOrder();
+    //     }
+    // },
     mounted() {
         this.getAllOrder()
     },
@@ -76,6 +79,16 @@ export default {
     methods: {
         async getAllOrder() {
             this.list = await StaffService.getAllOrder();
+            const docgia = await StaffService.getAll();
+            const sach = await bookService.getAll();
+            docgia.forEach(dg => {
+                this.list.forEach(element => {
+                    if (dg.id == element.docgia_id)
+                        element.docgia = dg;
+                })
+            });
+            this.list.docgia = docgia;
+            console.log(this.list)
             if(this.search != '') {
                 this.list = this.filteredProducts;
             }

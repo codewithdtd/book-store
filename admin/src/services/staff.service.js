@@ -5,7 +5,7 @@ class StaffService {
     this.api = createApiClient(baseUrl);
     }
     async getAll() {
-        return (await this.api.get("/")).data;
+        return (await this.api.get("/user")).data;
     }
     async register(data) {
         return (await this.api.post("/register", data)).data;

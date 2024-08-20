@@ -19,7 +19,7 @@
         </div>
         <div v-for="(item, index) in list" class="table__list row" :key="item.id">
             <div class="table__list__item col-sm-1">{{ index + 1 }}</div>
-            <div class="table__list__item col-sm-3">{{ item._id }}</div>
+            <div class="table__list__item col-sm-3">{{ item.id }}</div>
             <div class="table__list__item col-sm-3">
                 {{ item.ten }}
             </div>
@@ -82,7 +82,7 @@ export default {
         },
         async handleDelete(publisher) {
             const data = {
-                _id: publisher._id,
+                _id: publisher.id,
                 ten: publisher.ten,
                 diachi: publisher.diachi
             }
