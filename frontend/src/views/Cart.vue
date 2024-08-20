@@ -2,8 +2,8 @@
     <Notification :message="message" />
     <h1 class="cart__title" id="cart__title">GIỎ HÀNG</h1>
     <div class="cart row col-12">
-        <div class="cart__body col-lg-8" v-if="userStore.cart.length > 0">
-            <div v-for="item in userStore.cart" :key="item._id" class="cart__body__item row col-sm-11">
+        <div class="cart__body col-lg-8" v-if="userStore.cart.length > 0 && book.length > 0">
+            <div v-for="item in userStore.cart" :key="item.id" class="cart__body__item row col-sm-11">
                 <div class="cart__body__item__image col-sm-2">
                     <img :src="'http://localhost:3000/static/'+item.sach.hinhanh" alt="">
                 </div>
@@ -29,23 +29,41 @@
 <script>
 import { useUserStore } from '@/stores/userStore';
 import userService from '@/services/user.service';
+import bookService from '@/services/book.service';
 import Payment from '../components/Payment.vue';
 import Notification from '../components/Notification.vue'
 export default {
     components: {
         Payment, Notification
     },
-    created() {
+    mounted() {
         this.getCart();
     },
     methods: {
         async getCart() {
             if(this.userStore.login) {
                 this.userStore.cart = await userService.getCart()
-                this.cart =  this.userStore.cart.map(item => item.dongia)
+                const books = await bookService.getAll();
+                this.book = books;
+                if (!this.userStore.cart.sach) {
+                    this.userStore.cart.sach = [];
+                }
+                this.userStore.cart.forEach(element => {
+                    books.forEach(book => {
+                        if(book.id == element.sach_id) {
+                            book.dongia = parseInt(book.dongia);
+                            element.sach = book;
+                        }
+                    })
+                });
+
+                
+
+                this.cart =  this.userStore.cart.map(item => item.gia)
                 this.total = this.cart.reduce((acc, price) => {
-                    return acc+price;
+                    return parseInt(acc)+parseInt(price);
                 },0);
+                console.log(this.total)
             }
         },
         async update(payload) {
@@ -56,7 +74,7 @@ export default {
                 this.message = updated.message
         },
         async deleteCart(data) {
-            const deleted = await userService.deleteCart(data._id)
+            const deleted = await userService.deleteCart(data.id)
             if(deleted)
                 this.getCart()
             else 
@@ -71,6 +89,7 @@ export default {
             total: 0,
             message: '',
             cart: [],
+            book: [],
             userStore: useUserStore(),
         }
     }

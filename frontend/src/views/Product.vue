@@ -9,7 +9,7 @@
             <Filter @sort="sort" @range="range" />
             <div class="products__product__list" v-if="products.length>0">
                 <div class="products__product__item col-lg-2 col-3" v-for="item in products">
-                    <router-link :to="{ path: '/product/' + item._id}" class="products__product__item__image">
+                    <router-link :to="{ path: '/product/' + item.id}" class="products__product__item__image">
                         <img :src="'http://localhost:3000/static/'+item.hinhanh" alt="" class="">
                     </router-link>
                     
@@ -20,7 +20,7 @@
                     <div class="products__product__item__button">
                         <button v-if="item.soluong > 0" @click="addToCart(item)">Mượn</button>
                         <button v-else class="btn btn-secondary" disabled>Hết hàng</button>
-                        <router-link :to="{ path: '/product/' + item._id}">Xem thêm</router-link>
+                        <router-link :to="{ path: '/product/' + item.id}">Xem thêm</router-link>
                     </div>
                 </div>
             </div>
@@ -90,9 +90,9 @@ export default {
                 }
             }
             else {
-                const { _id, dongia, ten, hinhanh } = data;
-                const filterData = { _id, dongia, ten, hinhanh }
-
+                const { id, dongia, ten, hinhanh } = data;
+                const filterData = { id, dongia, ten, hinhanh }
+                console.log(filterData)
                 const success = await userService.addCart(filterData)
                 if(!success.message){
                     this.message = "Thành công"

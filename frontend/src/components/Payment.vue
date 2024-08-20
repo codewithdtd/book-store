@@ -61,7 +61,7 @@ export default {
     },
     computed: {
         tinhtongtien() {
-            return this.userStore.cart.reduce((total, currentItem) => total + currentItem.gia, 0);
+            return this.userStore.cart.reduce((total, currentItem) => total + parseInt(currentItem.gia), 0);
         }
     },
     methods: {

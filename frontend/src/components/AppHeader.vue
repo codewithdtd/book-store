@@ -75,7 +75,7 @@ export default {
         },
         async getUser() {
             if(this.userStore.login) {
-                this.user = await userService.get(this.userStore.user._id);
+                this.user = await userService.get(this.userStore.user.id);
             }
         }
     }
