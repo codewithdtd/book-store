@@ -58,8 +58,8 @@ export default {
     computed: {
         productStrings() {
             return this.list.map((product) => {
-                const { ten, tacgia, mota, nhaxuatban } = product;
-                return [ten, tacgia, mota, nhaxuatban].join(" ").toUpperCase();
+                const { id, ten, tacgia, mota, nhaxuatban } = product;
+                return [id, ten, tacgia, mota, nhaxuatban].join(" ").toUpperCase();
             });
         },
         filteredProducts() {

@@ -13,6 +13,8 @@ class OrderService {
             ngaymuon: payload.ngaymuon,
             ngaytra: payload.ngaytra,
             trangthai: payload.trangthai,
+            phuongthucthanhtoan: payload.method_payment,
+            ghichu: payload.note,
         };
         Object.keys(order).forEach(key => order[key] === undefined && delete order[key]);
         return order;
@@ -22,19 +24,19 @@ class OrderService {
         console.log(payload)
         const order = this.infoOrder(payload);
         const result = await this.db.oneOrNone(
-            `INSERT INTO phieutheodoi (docgia_id, tongtien, ngaymuon, ngaytra, trangthai)
-             VALUES ($[docgia_id], $[tongtien], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Đã đăng ký')
+            `INSERT INTO phieutheodoi (docgia_id, tongtien, ngaymuon, ngaytra, trangthai, phuongthucthanhtoan, ghichu)
+             VALUES ($[docgia_id], $[tongtien], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Đã đăng ký', $[phuongthucthanhtoan], $[ghichu])
              RETURNING id`,
             order
         );
         const insertQuery = `
             INSERT INTO chitietphieutheodoi (docgia, phieutheodoi_id, sach_id, soluong, gia, created_at)
-            VALUES ($1, $2, $3, $4, $5)
+            VALUES ($1, $2, $3, $4, $5, $6)
         `;
 
         // Iterate over the array and insert each item into the database
         for (const item of payload.sach) {
-            await db.none(insertQuery, [item.docgia, result, item.sach_id, item.soluong, item.gia, item.created_at]);
+            await db.none(insertQuery, [item.docgia, result.id, item.sach_id, item.soluong, item.gia, item.created_at]);
         }
         return result;
     }
@@ -75,6 +77,11 @@ class OrderService {
              WHERE docgia_id = $1`,
             [id]
         );
+
+        for (const item of result) {
+            const detail = await this.db.any(`SELECT * FROM chitietphieutheodoi WHERE phieutheodoi_id = $1`, item.id);
+            item.sach = detail; // Now you should see the actual data
+        }
         return result;
     }
     async findAllOrderDetailUser() {

@@ -1,5 +1,5 @@
 <template>
-    <div class="order">
+    <div class="order" v-if="this.load">
         <h3>Đơn hàng của bạn</h3>
         <div class="order__list order__list__title row col-sm-11">
             <div class="order__list__item col-sm-5"></div>
@@ -15,7 +15,6 @@
                     <div>
                         <p>{{ item_item.sach.ten }}</p>
                         <p>x{{ item_item.soluong }} {{ item_item.gia.toLocaleString() }} VNĐ</p>
-                        <!-- <p>{{ item_item.sach.ten }}</p> -->
                     </div>
                 </div>
             </div>
@@ -37,9 +36,10 @@
 
 <script>
 import userService from '@/services/user.service';
+import bookService from '@/services/book.service';
 export default {
     updated() {
-        this.getOrder();
+        // this.getOrder();
     },
     mounted() {
         this.getOrder();
@@ -47,11 +47,24 @@ export default {
     methods: {
         async getOrder() {
             this.order = await userService.getAllOrder();
+            this.book = await bookService.getAll();
+            this.order.map(o => {
+                o.sach.map(os => {
+                    const book = this.book.find(b => os.sach_id === b.id);
+                    if (book) {
+                        os.sach = book; // Gán đối tượng `book` vào `os.sach`
+                    }
+                    return os;
+                })
+            })
+            this.load = true
         }
     },
     data() {
         return {
             order: [],
+            book: [],
+            load: false
         }
     }
 }
